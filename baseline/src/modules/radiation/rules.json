@@ -1,0 +1,41 @@
+﻿{
+  "module": "radiation",
+  "kind": "function",
+  "note": "The scoring lives in radiation-engine.js. This file lists its limits and marks the source of each number. It has no indicators because the engine is wrapped as a plain function.",
+  "indicators": {},
+  "official": {
+    "career_effective_dose_mSv": {
+      "value": 600,
+      "meaning": "Career effective dose below 600 mSv",
+      "source": "NASA-STD-3001 Vol 1 Rev B, requirement V1 4030, via NASA OCHMO-TB-020 Rev E"
+    },
+    "spe_design_reference_mSv": {
+      "value": 250,
+      "meaning": "NASA design requirement for a reference solar particle event",
+      "source": "NASA-STD-3001 Vol 1 Rev B, requirement V1 4031. Not a per-event limit and not used in scoring."
+    }
+  },
+  "design_values": {
+    "max_points": { "dose": 40, "symptoms": 35, "weather": 25, "source": "design value" },
+    "symptom_points": {
+      "nausea": 8,
+      "vomiting": 14,
+      "fatigue": 6,
+      "skin": 8,
+      "fever": 8,
+      "bruising": 10,
+      "source": "design value"
+    },
+    "flux_steps_pfu_10MeV_and_above": {
+      "S1": { "from_pfu": 10, "points": 5 },
+      "S2": { "from_pfu": 100, "points": 10 },
+      "S3": { "from_pfu": 1000, "points": 17 },
+      "S4": { "from_pfu": 10000, "points": 22 },
+      "S5": { "from_pfu": 100000, "points": 25 },
+      "source": "design value"
+    },
+    "urgency_cutoffs": { "watch_from": 30, "act_from": 60, "source": "design value" },
+    "escalate_at_fraction_of_career_dose": { "value": 0.8, "source": "design value" },
+    "quiet_flux_placeholder_pfu": { "value": 1, "source": "design value" }
+  }
+}

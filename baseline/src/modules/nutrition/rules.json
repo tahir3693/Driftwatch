@@ -1,0 +1,35 @@
+﻿{
+  "module": "nutrition",
+  "indicators": {
+    "intake_pct_of_plan": {
+      "label": "Food intake against plan",
+      "unit": "% of plan",
+      "bad_direction": "low",
+      "bands": {
+        "normal": { "value_min": 90 },
+        "watch": { "value_min": 75, "value_max": 90 },
+        "act": { "value_max": 75 }
+      },
+      "why": "Food intake is {delta} {unit} from the nearest limit. Watch applies below 90% for 3 days; Act below 75% for a week.",
+      "action": "Eat the planned menu and fluids, and tell the flight surgeon if intake stays low.",
+      "howToMeasure": "Log what share of the planned menu you ate today, as a percentage.",
+      "whyItMatters": "Inadequate food and nutrition cause decrements in health and performance. Low intake becomes an extra reason in bone, immune and mood alerts.",
+      "source": "design value"
+    },
+    "vitamin_d_ng_ml": {
+      "label": "Vitamin D level",
+      "unit": "ng/mL",
+      "bad_direction": "low",
+      "bands": {
+        "normal": { "value_min": 35 },
+        "watch": { "value_max": 35 },
+        "act": null
+      },
+      "why": "Vitamin D is {delta} {unit} from the 35 ng/mL lower edge of the optimal range.",
+      "action": "Discuss the result with the flight surgeon.",
+      "howToMeasure": "Enter the result of a blood test if one is taken in flight.",
+      "whyItMatters": "The optimal range is 35 to 90 ng/mL. Driftwatch never tells anyone to take supplements, because too much calcium may cause kidney stones.",
+      "source": "NASA OCHMO-TB-030 (bone loss technical brief) for the 35 to 90 ng/mL optimal range; the Watch mapping is a design value"
+    }
+  }
+}

@@ -1,0 +1,92 @@
+﻿{
+  "module": "gravity",
+  "indicators": {
+    "exercise_sessions_per_week": {
+      "label": "Exercise sessions per week",
+      "unit": "sessions",
+      "bad_direction": "low",
+      "bands": {
+        "normal": { "value_min": 6 },
+        "watch": { "value_min": 4, "value_max": 6 },
+        "act": { "value_max": 4 }
+      },
+      "why": "Possible bone and muscle risk: exercise is {delta} {unit} from the nearest limit. Act applies when it stays below 4 for two weeks.",
+      "action": "Schedule more exercise sessions this week and tell the flight surgeon if it stays low.",
+      "howToMeasure": "Count the exercise sessions you completed in the last 7 days from the exercise log.",
+      "whyItMatters": "NASA found 6 to 7 sessions a week effective in spaceflight, against 2 to 3 a week to maintain bone on Earth.",
+      "source": "NASA OCHMO-TB-030 (bone loss technical brief) for 6 to 7 sessions a week; the Watch and Act limits are design values"
+    },
+    "resting_heart_rate_bpm": {
+      "label": "Resting heart rate",
+      "unit": "bpm",
+      "bad_direction": "both",
+      "bands": {
+        "normal": { "abs_z_max": 2 },
+        "watch": { "abs_z_min": 2 },
+        "act": null
+      },
+      "why": "Resting heart rate is {delta} {unit} from your usual, more than 2 standard deviations. Watch applies when it lasts 3 days.",
+      "action": "Rest, re-measure, and tell the flight surgeon if it stays off for 3 days.",
+      "howToMeasure": "Sit quietly for a few minutes, then log your heart rate by hand entry.",
+      "whyItMatters": "A change from your own baseline can show cardiovascular adaptation to altered gravity.",
+      "source": "design value"
+    },
+    "standing_bp_drop": {
+      "label": "Blood pressure drop on standing",
+      "unit": "code",
+      "bad_direction": "high",
+      "bands": {
+        "normal": { "value_max": 1 },
+        "watch": { "value_min": 1 },
+        "act": null
+      },
+      "why": "A clear blood pressure drop on standing with dizziness is logged.",
+      "action": "Sit or lie down, drink fluids as planned, and tell the flight surgeon.",
+      "howToMeasure": "Measure blood pressure sitting, then standing. Enter 0 for no clear drop. Enter 1 for a clear drop with dizziness.",
+      "whyItMatters": "Orthostatic intolerance is the main cardiovascular risk during a mission.",
+      "source": "design value"
+    },
+    "orthostatic_symptoms": {
+      "label": "Orthostatic symptoms",
+      "unit": "code",
+      "bad_direction": "high",
+      "bands": {
+        "normal": { "value_max": 1 },
+        "watch": { "value_min": 1, "value_max": 2 },
+        "act": { "value_min": 2 }
+      },
+      "why": "Possible orthostatic symptoms are logged (code {delta} from none).",
+      "action": "Sit or lie down. For fainting or chest pain, contact the flight surgeon now.",
+      "howToMeasure": "Enter 0 for none. Enter 1 for lightheaded on standing. Enter 2 for fainting or chest pain.",
+      "whyItMatters": "Fainting or chest pain needs attention from the flight surgeon at once.",
+      "source": "design value"
+    },
+    "low_intake_bone_note": {
+      "label": "Low food intake (bone note)",
+      "unit": "code",
+      "bad_direction": "high",
+      "bands": {
+        "normal": { "value_max": 1 },
+        "watch": { "value_min": 1 },
+        "act": null
+      },
+      "why": "Low food intake is an extra reason for possible bone and muscle risk.",
+      "action": "Raise this with the flight surgeon and review the planned menu.",
+      "howToMeasure": "Fed from the nutrition module. Enter 0 when intake is on plan. Enter 1 when the nutrition module is in Watch or Act.",
+      "whyItMatters": "NASA requires in-mission nutrient programs to provide 100% of calculated nutrient and energy requirements, which bone depends on.",
+      "source": "design value"
+    }
+  },
+  "patterns": {
+    "bone_muscle_risk": {
+      "needs": ["exercise_sessions_per_week", "low_intake_bone_note"],
+      "min_in_watch": 2,
+      "for_days": 3,
+      "result": "watch",
+      "escalate": false,
+      "why": "Low exercise together with low food intake raises a possible bone and muscle risk. This is a risk level, not a measurement.",
+      "action": "Review exercise and the menu with the flight surgeon. Do not start supplements on your own.",
+      "source": "design value"
+    }
+  }
+}

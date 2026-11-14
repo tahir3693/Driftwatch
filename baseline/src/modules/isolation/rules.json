@@ -1,0 +1,77 @@
+﻿{
+  "module": "isolation",
+  "indicators": {
+    "sleep_hours": {
+      "label": "Sleep",
+      "unit": "h",
+      "bad_direction": "low",
+      "bands": {
+        "normal": { "z_min": -2 },
+        "watch": { "z_max": -2 },
+        "act": null
+      },
+      "why": "Possible strain: sleep is {delta} {unit} below your usual, more than 2 standard deviations. Watch applies when it lasts 3 nights.",
+      "action": "Protect a full sleep period tonight. If it continues, contact the flight surgeon or crew support.",
+      "howToMeasure": "Log the hours you slept each morning.",
+      "whyItMatters": "Judged against your own baseline, not an 8-hour rule. Short sleep slows reactions and can add to strain.",
+      "source": "design value"
+    },
+    "mood": {
+      "label": "Mood",
+      "unit": "points",
+      "bad_direction": "low",
+      "bands": {
+        "normal": { "z_min": -2 },
+        "watch": { "z_max": -2 },
+        "act": null
+      },
+      "why": "Possible strain: mood is {delta} {unit} below your usual, more than 2 standard deviations. Watch applies when it lasts 3 days.",
+      "action": "Take a short break and talk with the crew. If it continues, contact the flight surgeon or crew support.",
+      "howToMeasure": "Rate your mood once a day from 1 (low) to 5 (high).",
+      "whyItMatters": "Mood changes against your own usual can show strain early. NASA notes that some crew report rising stress in the second half of a mission.",
+      "source": "design value"
+    },
+    "reaction_ms": {
+      "label": "Reaction check",
+      "unit": "ms",
+      "bad_direction": "high",
+      "bands": {
+        "normal": { "z_max": 2 },
+        "watch": { "z_min": 2 },
+        "act": null
+      },
+      "why": "Possible strain: your reaction check is {delta} {unit} slower than your usual, more than 2 standard deviations.",
+      "action": "Repeat the reaction check after rest. If it stays slow, contact the flight surgeon or crew support.",
+      "howToMeasure": "Do the 1 to 2 minute reaction check: tap when the prompt appears. The result is your median reaction time in milliseconds.",
+      "whyItMatters": "Slower reactions than your own usual can show tiredness or strain. NASA lists reaction tests among its monitoring tools.",
+      "source": "design value"
+    },
+    "social_contact": {
+      "label": "Social contact",
+      "unit": "min",
+      "bad_direction": "low",
+      "bands": {
+        "normal": { "z_min": -2 },
+        "watch": { "z_max": -2 },
+        "act": null
+      },
+      "why": "Possible strain: time with crew or family is {delta} {unit} below your usual, more than 2 standard deviations.",
+      "action": "Plan some time with the crew or a call home. If it continues, contact the flight surgeon or crew support.",
+      "howToMeasure": "Log the minutes you spent with crew or family today.",
+      "whyItMatters": "Falling contact over a week can be an early sign of strain during isolation and confinement.",
+      "source": "design value"
+    }
+  },
+  "patterns": {
+    "combined_strain": {
+      "needs": ["sleep_hours", "mood", "reaction_ms", "social_contact"],
+      "min_in_watch": 2,
+      "for_days": 2,
+      "result": "act",
+      "escalate": true,
+      "why": "Several signs of strain together for 2 days.",
+      "action": "Contact the flight surgeon or crew support.",
+      "source": "design value"
+    }
+  }
+}
