@@ -3,18 +3,21 @@ import OfflineIndicator from './ui/OfflineIndicator.jsx'
 import Dashboard from './ui/Dashboard.jsx'
 import CheckInScreen from './ui/CheckInScreen.jsx'
 import GroundReport from './ui/GroundReport.jsx'
+import BmdTrackerScreen from './ui/BmdTrackerScreen.jsx'
 import SourcesPanel from './ui/SourcesPanel.jsx'
 import ScenarioControls from './ui/ScenarioControls.jsx'
 import AppNav from './ui/AppNav.jsx'
 import { useDashboardData } from './store/dashboardData.js'
 import { useCheckIn } from './store/useCheckIn.js'
 import { useScenarioPlayer } from './store/scenarioPlayer.js'
+import { useSpaceWeather } from './store/spaceWeather.js'
 
 export default function App() {
   const { data: stored, refresh } = useDashboardData()
   const { streak, submit } = useCheckIn(refresh)
   const scenario = useScenarioPlayer()
-  const [view, setView] = useState('dashboard') // 'dashboard' | 'checkin' | 'report' | 'sources'
+  const spaceWeather = useSpaceWeather(refresh)
+  const [view, setView] = useState('dashboard') // 'dashboard' | 'checkin' | 'report' | 'sources' | 'bmd'
   const [reportNow, setReportNow] = useState(null)
   const [preparing, setPreparing] = useState(false)
   const openCount = useRef(0)
@@ -26,6 +29,8 @@ export default function App() {
   // During the scenario the report uses the scenario day's time and needs no refresh.
   function changeView(next) {
     if (next !== 'report' || scenario.data) {
+      // Leaving the BMD and strength screen: the tracker saved to localStorage, so reload the alerts.
+      if (view === 'bmd' && next !== 'bmd' && !scenario.data) Promise.resolve(refresh?.()).catch(() => {})
       setView(next)
       return
     }
@@ -62,15 +67,23 @@ export default function App() {
         <OfflineIndicator />
       </header>
       <p className="no-print mt-1 mb-4 text-lg text-slate-300">Catch the drift before it becomes a problem.</p>
-      <AppNav view={view} onChange={changeView} />
+      <AppNav view={view === 'bmd' ? 'dashboard' : view} onChange={changeView} />
       {view === 'checkin' ? (
         <CheckInScreen onSubmit={submit} streak={streak} onShowDashboard={() => changeView('dashboard')} />
       ) : view === 'report' ? (
-        <GroundReport data={data} now={scenario.data ? scenario.now : reportNow} refreshing={scenario.data ? false : preparing} />
+        <GroundReport data={data} now={scenario.data ? scenario.now : reportNow} refreshing={scenario.data ? false : preparing} spaceWeather={spaceWeather} />
       ) : view === 'sources' ? (
         <SourcesPanel />
+      ) : view === 'bmd' ? (
+        <BmdTrackerScreen onBack={() => changeView('dashboard')} />
       ) : (
-        <Dashboard data={data} onShowCheckIn={() => changeView('checkin')} scenarioControls={controls} />
+        <Dashboard
+          data={data}
+          onShowCheckIn={() => changeView('checkin')}
+          onShowBmd={() => changeView('bmd')}
+          spaceWeather={spaceWeather}
+          scenarioControls={controls}
+        />
       )}
     </main>
   )

@@ -36,7 +36,7 @@
       },
       "howToMeasure": "Enter the hip and lumbar spine BMD values in g/cm² from your scan report in the BMD and strength tracker. The first entry marked as baseline is the reference.",
       "whyItMatters": "Bone mineral density can fall in weightlessness. Comparing each scan with your own baseline shows a possible loss early.",
-      "source": "NASA OCHMO-TB-030 for the 95% of baseline hip and spine limit; the 98% limit is a design value"
+      "source": "NASA-STD-3001 Vol 1 Rev C (V1 4027: hip and spine BMD at or above 95% of pre-mission values); the 98% limit, point weights and urgency cut-offs are design values"
     },
     "strength_ratio": {
       "kind": "baseline_ratio",
@@ -70,7 +70,7 @@
       },
       "howToMeasure": "Log a consistent lift, such as a tested one-rep max for deadlift and bench press, in the BMD and strength tracker.",
       "whyItMatters": "Muscle strength can fall in weightlessness. A drop against your own baseline is an early sign to review training.",
-      "source": "design value"
+      "source": "NASA-STD-3001 Vol 1 Rev C (V1 4024: strength at or above 80% of baseline); the 90% limit, point weights and urgency cut-offs are design values"
     },
     "missed_training_days": {
       "kind": "missed_days",

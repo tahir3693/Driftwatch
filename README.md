@@ -67,7 +67,7 @@ Screens:
 | [OCHMO-TB-004 Carbon Dioxide](https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-004-carbon-dioxide.pdf) | NASA | 3 mmHg 1-hour average and 2.5 mmHg 7-day average for cabin CO2 |
 | [OCHMO-TB-030 Bone Loss](https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-030-bone-loss.pdf) | NASA | 6 to 7 exercise sessions a week, the 95% of baseline hip and spine BMD limit, and the vitamin D range |
 | [Behavioral Challenges of a Mars Mission (NTRS)](https://ntrs.nasa.gov/citations/20240010442) | NASA | Context for sleep, stress ratings, the reaction check and scheduled contact. The Isolation limits are design values. |
-| [DONKI, Space Weather Database Of Notifications, Knowledge, Information](https://kauai.ccmc.gsfc.nasa.gov/DONKI/) | NASA (CCMC) | A saved sample of solar energetic particle events from May to June 2024, in `driftwatch/data/nasa/donki-sep-sample.json`. Kept for a planned space weather context line; the app does not use it yet. |
+| [DONKI, Space Weather Database Of Notifications, Knowledge, Information](https://kauai.ccmc.gsfc.nasa.gov/DONKI/) | NASA (CCMC) | A saved sample of solar energetic particle events from May to June 2024, in `driftwatch/data/nasa/donki-sep-sample.json`. The app shows it as a space weather context line (Head and lungs detail, Ground report under Radiation) and adds the latest event to the why text of the solar proton flux alert. DONKI SEP gives no flux or dose, so it is context only and never scored. The saved file holds the plain address, with no api_key. |
 | [Space Weather Scales: Solar Radiation Storms (S-scale)](https://www.swpc.noaa.gov/noaa-scales-explanation) | **NOAA** | Solar proton flux steps S1 to S5. How the steps map to points is a Driftwatch prototype, not a NOAA value. |
 | [GOES Proton Flux](https://www.swpc.noaa.gov/products/goes-proton-flux) | **NOAA** | The flux indicator uses the same quantity and unit (pfu). Scenario flux values are simulated. |
 
@@ -85,7 +85,7 @@ npm run test:run   # full test suite, once
 npm run build      # production build in driftwatch/dist
 ```
 
-No key is needed. `driftwatch/.env.example` shows the one optional setting, `VITE_NASA_API_KEY`, reserved for a planned live DONKI request. Copy it to `.env` only if you want that, and never commit a `.env` file. Any `VITE_` value is built into the browser code, so anyone using the site can read it. The deployed build runs without a key.
+No key is needed. The deployed build uses no key and always uses the saved DONKI sample. driftwatch/.env.example shows the one optional setting, `VITE_NASA_API_KEY`. Copy it to `.env` only if you want a live DONKI request: it is made only when a key is set and the browser is online, stops after 5 seconds, and falls back to the saved sample on any failure. Never commit a `.env` file. Any `VITE_` value is built into the browser code, so anyone using the site can read it.
 
 ## Offline use
 

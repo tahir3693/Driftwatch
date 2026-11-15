@@ -13,6 +13,12 @@
           "usedFor": "Radiation: the career effective dose requirement (requirement V1 4030) and the design requirement for a reference solar particle event (requirement V1 4031). The reference event is shown as context and is not used in scoring."
         },
         {
+          "id": "NASA-STD-3001 Vol 1 Rev C",
+          "title": "NASA Space Flight Human-System Standard, Volume 1: Crew Health, Revision C",
+          "kind": "Document",
+          "usedFor": "BMD and strength tracker: the strength at or above 80% of baseline limit (requirement V1 4024) and the hip and spine BMD at or above 95% of pre-mission values limit (requirement V1 4027). The other limits, point weights and cut-offs are design values."
+        },
+        {
           "id": "NASA OCHMO-TB-020 Rev E",
           "title": "NASA Office of the Chief Health and Medical Officer technical brief on radiation protection, Revision E",
           "kind": "Document",
@@ -29,6 +35,12 @@
           "title": "NASA Office of the Chief Health and Medical Officer technical brief on bone loss",
           "kind": "Document",
           "usedFor": "Gravity: 6 to 7 exercise sessions a week. BMD and strength tracker: the 95% of baseline hip and spine BMD limit. Nutrition: the 35 to 90 ng/mL vitamin D range."
+        },
+        {
+          "id": "NASA DONKI SEP",
+          "title": "NASA CCMC DONKI (Space Weather Database Of Notifications, Knowledge, Information): solar energetic particle events",
+          "kind": "Dataset",
+          "usedFor": "Radiation: a context line with the latest event. The events are a real NASA sample saved for May to June 2024 (or live, when a key is set). DONKI gives no flux or dose, so the events are not scored, and the scenario values stay simulated."
         },
         {
           "id": "NASA NTRS: Behavioral Challenges of a Mars Mission",

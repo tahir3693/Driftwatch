@@ -2,18 +2,18 @@
 import { describe, it, expect } from 'vitest'
 import { buildDefaultScenario, playDay } from '../src/sim/playScenario.js'
 import { loadCutoffs } from '../src/data/cutoffs.js'
-import { bmdAlerts } from '../src/modules/bmd-strength/bmdAdapter.js'
+import { engineAlerts } from '../src/modules/bmd-strength/engineAdapter.js'
 
 const cutoffs = loadCutoffs()
 const days = buildDefaultScenario()
 const scenarioAlerts = days.flatMap((_, i) => playDay(days, i + 1, cutoffs).alerts)
 
-// BMD and strength alerts at Normal, Watch and Act (ratios 0.99, 0.96 and 0.9 of baseline).
+// BMD and strength alerts at Normal, Watch and Act (ratios 0.99, 0.96 and 0.9 of baseline; 6, 4 and 2 trained days).
 const base = { id: 'b', created: 1, date: '2025-01-01', baseline: true, hip: 1, lumbar: 1, deadlift: 100, bench: 100 }
-const bmd = [0.99, 0.96, 0.9].flatMap((r) =>
-  bmdAlerts(
-    { measurements: [base, { id: 'l', created: 2, date: '2025-01-10', baseline: false, hip: r, lumbar: r, deadlift: 100 * r, bench: 100 * r }], weeklyWorkouts: { '2025-01-13': { strength: true } } },
-    { today: '2025-01-16', cutoffs },
+const bmd = [[0.99, 6], [0.96, 4], [0.9, 2]].flatMap(([r, trained]) =>
+  engineAlerts(
+    { measurements: [base, { id: 'l', created: 2, date: '2025-01-10', baseline: false, hip: r, lumbar: r, deadlift: 100 * r, bench: 100 * r }], weeklyWorkouts: Object.fromEntries(['2025-01-13', '2025-01-14', '2025-01-15', '2025-01-16', '2025-01-17', '2025-01-18'].slice(0, trained).map((d) => [d, { strength: true }])) },
+    { today: '2025-01-19', cutoffs },
   ),
 )
 const all = [...scenarioAlerts, ...bmd]

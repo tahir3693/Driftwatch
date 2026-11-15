@@ -7,17 +7,18 @@ import TrendChart from './TrendChart.jsx'
 import HelpPanel from './HelpPanel.jsx'
 import StatusBadge from './StatusBadge.jsx'
 import BmdTrackerLink from './BmdTrackerLink.jsx'
+import SpaceWeatherLine from './SpaceWeatherLine.jsx'
 import { groupByRegion, computeRegionStatus, sortByUrgency } from './regionStatus.js'
 
 const keyOf = (alert) => `${alert.domain}/${alert.indicator}`
 const isOverall = (alert) => alert.indicator === `${alert.domain}_overall`
 
 /**
- * The dashboard. Props: { data: DashboardData, mapping, onLoadScenario, onShowCheckIn, scenarioControls }.
+ * The dashboard. Props: { data: DashboardData, mapping, onLoadScenario, onShowCheckIn, onShowBmd, spaceWeather, scenarioControls }.
  * `scenarioControls` is an element (the scenario player) shown under the banner.
  * Presentational: it never reads storage or calls the engine.
  */
-export default function Dashboard({ data, mapping = defaultMapping, onLoadScenario, onShowCheckIn, scenarioControls = null }) {
+export default function Dashboard({ data, mapping = defaultMapping, onLoadScenario, onShowCheckIn, onShowBmd, spaceWeather = null, scenarioControls = null }) {
   const [selectedRegion, setSelectedRegion] = useState(null)
   const [helpTarget, setHelpTarget] = useState(null)
   const [loadError, setLoadError] = useState(false)
@@ -65,15 +66,26 @@ export default function Dashboard({ data, mapping = defaultMapping, onLoadScenar
     <div className="overflow-x-hidden text-base">
       <SimulatedBanner />
       {scenarioControls}
-      {typeof onShowCheckIn === 'function' ? (
-        <button
-          type="button"
-          onClick={onShowCheckIn}
-          className="mt-3 min-h-11 min-w-11 rounded border border-slate-400 px-4 py-2 text-base font-semibold"
-        >
-          Check-in
-        </button>
-      ) : null}
+      <div className="flex flex-wrap gap-2">
+        {typeof onShowCheckIn === 'function' ? (
+          <button
+            type="button"
+            onClick={onShowCheckIn}
+            className="mt-3 min-h-11 min-w-11 rounded border border-slate-400 px-4 py-2 text-base font-semibold"
+          >
+            Check-in
+          </button>
+        ) : null}
+        {typeof onShowBmd === 'function' ? (
+          <button
+            type="button"
+            onClick={onShowBmd}
+            className="mt-3 min-h-11 min-w-11 rounded border border-slate-400 px-4 py-2 text-base font-semibold"
+          >
+            BMD and strength
+          </button>
+        ) : null}
+      </div>
       {isLoading ? <p className="mt-3 text-base">Loading data</p> : null}
       {showSeed ? (
         <div className="mt-3 rounded border border-slate-500 p-3">
@@ -102,7 +114,8 @@ export default function Dashboard({ data, mapping = defaultMapping, onLoadScenar
                 <h2 className="text-2xl font-semibold">{region.name}</h2>
                 <StatusBadge status={regionSummary.status} />
               </div>
-              {region.id === 'bones_and_muscles' ? <BmdTrackerLink /> : null}
+              {region.domains?.includes('radiation') ? <SpaceWeatherLine spaceWeather={spaceWeather} className="mt-2" /> : null}
+              {region.id === 'bones_and_muscles' ? <BmdTrackerLink onOpen={onShowBmd} /> : null}
               {regionAlerts.length === 0 ? (
                 <p className="mt-2 text-base">No alerts for this region yet.</p>
               ) : (

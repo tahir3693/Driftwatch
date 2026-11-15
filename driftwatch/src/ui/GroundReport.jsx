@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react'
 import './groundReport.css'
 import SimulatedBanner from './SimulatedBanner.jsx'
 import StatusBadge from './StatusBadge.jsx'
+import SpaceWeatherLine from './SpaceWeatherLine.jsx'
 import { loadReportConfig } from '../data/reportConfig.js'
 import { buildGroundReport } from '../report/buildGroundReport.js'
 import { flattenReadings } from '../report/flattenReadings.js'
@@ -57,10 +58,10 @@ function PrintButton({ onPrint, disabled }) {
 }
 
 /**
- * The Ground report screen. Props: { data: DashboardData, now, config, onPrint, refreshing }.
+ * The Ground report screen. Props: { data: DashboardData, now, config, onPrint, refreshing, spaceWeather }.
  * `now` comes from the app, so the report never reads the clock. It reads no storage and makes no request.
  */
-export default function GroundReport({ data, now, config = loadReportConfig(), onPrint = printWindow, refreshing = false }) {
+export default function GroundReport({ data, now, config = loadReportConfig(), onPrint = printWindow, refreshing = false, spaceWeather = null }) {
   const hasNow = typeof now === 'number' && Number.isFinite(now)
   const loading = !data || data.status === 'loading' || refreshing || !hasNow
 
@@ -181,6 +182,7 @@ export default function GroundReport({ data, now, config = loadReportConfig(), o
               {withAlerts.map((m) => (
                 <div key={m.domain} className="alerts-module">
                   <h3 className="mt-2 text-lg font-semibold">{m.label}</h3>
+                  {m.domain === 'radiation' ? <SpaceWeatherLine spaceWeather={spaceWeather} className="space-weather mt-1" /> : null}
                   <ul>
                     {withoutDuplicateOverall(m).map((a) => (
                       <li key={`${a.domain}/${a.indicator}`} className="alert-entry mt-1">
@@ -208,6 +210,14 @@ export default function GroundReport({ data, now, config = loadReportConfig(), o
           )}
         </section>
 
+        {spaceWeather && !withAlerts.some((m) => m.domain === 'radiation') ? (
+          <section aria-labelledby="report-h-space-weather" className="mt-4">
+            <h2 id="report-h-space-weather" className="text-xl font-semibold">
+              Radiation
+            </h2>
+            <SpaceWeatherLine spaceWeather={spaceWeather} className="space-weather mt-1" />
+          </section>
+        ) : null}
         <section aria-labelledby="report-h-readings" className="mt-4">
           <h2 id="report-h-readings" className="text-xl font-semibold">
             {HEADING_READINGS}

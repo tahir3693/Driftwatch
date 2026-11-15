@@ -1,6 +1,6 @@
 {
   "source": "NASA DONKI SEP (solar energetic particle events)",
-  "url": "https://api.nasa.gov/DONKI/SEP?startDate=2024-05-01&endDate=2024-06-\n30&api_key=REDACTED",
+  "url": "https://api.nasa.gov/DONKI/SEP?startDate=2024-05-01&endDate=2024-06-30",
   "downloaded": "2026-11-15T07:55:01.164Z",
   "events": [
     {
