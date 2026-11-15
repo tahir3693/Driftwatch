@@ -1,77 +1,78 @@
-﻿{
+{
   "module": "isolation",
+  "urgency": { "watch_from": 30, "act_from": 60, "source": "design value" },
+  "baseline_days": 5,
+  "normal": {
+    "why": "Close to your own normal.",
+    "action": "Keep monitoring."
+  },
+  "escalate_action": "Contact the flight surgeon or crew support.",
+  "extra_reasons": {
+    "low_intake": "Low food intake may also be adding to this."
+  },
   "indicators": {
     "sleep_hours": {
-      "label": "Sleep",
-      "unit": "h",
-      "bad_direction": "low",
+      "label": "Sleep", "unit": "h", "bad_direction": "low", "min_sd": 0.4,
       "bands": {
-        "normal": { "z_min": -2 },
-        "watch": { "z_max": -2 },
-        "act": null
+        "normal": { "z_min": -1.0 },
+        "watch":  { "z_min": -2.0, "z_max": -1.0 },
+        "act":    { "z_max": -2.0 }
       },
-      "why": "Possible strain: sleep is {delta} {unit} below your usual, more than 2 standard deviations. Watch applies when it lasts 3 nights.",
-      "action": "Protect a full sleep period tonight. If it continues, contact the flight surgeon or crew support.",
-      "howToMeasure": "Log the hours you slept each morning.",
-      "whyItMatters": "Judged against your own baseline, not an 8-hour rule. Short sleep slows reactions and can add to strain.",
-      "source": "design value"
+      "why": "Sleep is {delta} {unit} below your usual.",
+      "action": "Protect a full sleep period tonight.",
+      "howToMeasure": "Log the hours you slept this morning.",
+      "whyItMatters": "Short sleep slows reactions and lowers mood.",
+      "source": "design value (context: NASA NTRS, Behavioral Challenges of a Mars Mission, ISS crews averaged just over 6 h a night)"
     },
     "mood": {
-      "label": "Mood",
-      "unit": "points",
-      "bad_direction": "low",
+      "label": "Mood and stress", "unit": "points", "bad_direction": "high", "min_sd": 0.6,
       "bands": {
-        "normal": { "z_min": -2 },
-        "watch": { "z_max": -2 },
-        "act": null
+        "normal": { "z_max": 1.0 },
+        "watch":  { "z_min": 1.0, "z_max": 2.0 },
+        "act":    { "z_min": 2.0 }
       },
-      "why": "Possible strain: mood is {delta} {unit} below your usual, more than 2 standard deviations. Watch applies when it lasts 3 days.",
-      "action": "Take a short break and talk with the crew. If it continues, contact the flight surgeon or crew support.",
-      "howToMeasure": "Rate your mood once a day from 1 (low) to 5 (high).",
-      "whyItMatters": "Mood changes against your own usual can show strain early. NASA notes that some crew report rising stress in the second half of a mission.",
-      "source": "design value"
+      "why": "Mood and stress are {delta} {unit} worse than your usual.",
+      "action": "Take a short break, talk to a crewmate, and keep your routine steady.",
+      "howToMeasure": "Once a day, slide to a number from 0 (calm and happy) to 10 (very stressed). It takes about 10 seconds.",
+      "whyItMatters": "Strain can build up quietly in a small space. Your own trend shows it before it feels big.",
+      "source": "design value (context: stress ratings are a monitoring tool in NASA NTRS, Behavioral Challenges of a Mars Mission)"
     },
     "reaction_ms": {
-      "label": "Reaction check",
-      "unit": "ms",
-      "bad_direction": "high",
+      "label": "Reaction time", "unit": "ms", "bad_direction": "high", "min_sd": 12,
       "bands": {
-        "normal": { "z_max": 2 },
-        "watch": { "z_min": 2 },
-        "act": null
+        "normal": { "z_max": 1.0 },
+        "watch":  { "z_min": 1.0, "z_max": 2.0 },
+        "act":    { "z_min": 2.0 }
       },
-      "why": "Possible strain: your reaction check is {delta} {unit} slower than your usual, more than 2 standard deviations.",
-      "action": "Repeat the reaction check after rest. If it stays slow, contact the flight surgeon or crew support.",
-      "howToMeasure": "Do the 1 to 2 minute reaction check: tap when the prompt appears. The result is your median reaction time in milliseconds.",
-      "whyItMatters": "Slower reactions than your own usual can show tiredness or strain. NASA lists reaction tests among its monitoring tools.",
-      "source": "design value"
+      "why": "Reaction time is {delta} {unit} slower than your usual.",
+      "action": "Rest if you can and avoid risky tasks until your next test.",
+      "howToMeasure": "Do the 1 to 2 minute tap test once a day. Tap as soon as the signal appears. The app saves your median time.",
+      "whyItMatters": "Reaction time tends to slow when you are tired. It is an objective check next to how you say you feel.",
+      "source": "design value (context: the psychomotor vigilance task is a monitoring tool in NASA NTRS, Behavioral Challenges of a Mars Mission)"
     },
     "social_contact": {
-      "label": "Social contact",
-      "unit": "min",
-      "bad_direction": "low",
+      "label": "Social contact", "unit": "min", "bad_direction": "low", "min_sd": 8,
       "bands": {
-        "normal": { "z_min": -2 },
-        "watch": { "z_max": -2 },
-        "act": null
+        "normal": { "z_min": -1.0 },
+        "watch":  { "z_min": -2.0, "z_max": -1.0 },
+        "act":    { "z_max": -2.0 }
       },
-      "why": "Possible strain: time with crew or family is {delta} {unit} below your usual, more than 2 standard deviations.",
-      "action": "Plan some time with the crew or a call home. If it continues, contact the flight surgeon or crew support.",
-      "howToMeasure": "Log the minutes you spent with crew or family today.",
-      "whyItMatters": "Falling contact over a week can be an early sign of strain during isolation and confinement.",
-      "source": "design value"
+      "why": "Time with crew and family is {delta} {unit} less than your usual.",
+      "action": "Schedule a call with family or ground, or share a meal with the crew.",
+      "howToMeasure": "Log the minutes you spent talking with crew, ground or family today.",
+      "whyItMatters": "Less contact over several days can go along with lower mood and feeling cut off.",
+      "source": "design value (context: scheduled contact with ground and family is a countermeasure in NASA NTRS, Behavioral Challenges of a Mars Mission)"
     }
   },
   "patterns": {
     "combined_strain": {
       "needs": ["sleep_hours", "mood", "reaction_ms", "social_contact"],
-      "min_in_watch": 2,
-      "for_days": 2,
-      "result": "act",
-      "escalate": true,
+      "min_in_watch": 2, "for_days": 2,
+      "result": "act", "escalate": true,
       "why": "Several signs of strain together for 2 days.",
       "action": "Contact the flight surgeon or crew support.",
       "source": "design value"
     }
-  }
+  },
+  "disclaimer": "Decision support using simulated data. It does not diagnose."
 }
