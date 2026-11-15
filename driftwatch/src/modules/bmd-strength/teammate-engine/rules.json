@@ -1,0 +1,24 @@
+{
+  "module": "BMD_and_strength",
+  "kind": "function",
+  "note": "The scoring lives in BMD_and_strength.js. This file lists its limits and marks the source of each number. It has no indicators because the engine is wrapped as a plain function.",
+  "indicators": {},
+  "official": {
+    "Fraction_of_original_strength": {
+      "value": 0.8,
+      "meaning": "Level of strength shall stay at least at 80% of its in-earth value",
+      "source": "NASA-STD-3001 Vol 1 Rev C"
+    },
+    "Fraction_of_original_BMD": {
+      "value": 0.95,
+      "meaning": "BMD shall stay at least at 95% of its in-earth value",
+      "source": "NASA-STD-3001 Vol 1 Rev C"
+    }
+  },
+  "design_values": {
+    "max_points": { "workouts": 20, "parameter_fluctuations": 80, "source": "design value" },
+    "urgency_cutoffs": { "watch_from": 20, "act_from": 50, "source": "design value" },
+    "escalate_at_closeness_to_low_strength": { "value": 0.80, "source": "design value" },
+    "escalate_at_closeness_to_low_BMD": { "value": 0.95, "source": "design value" }
+  }
+}

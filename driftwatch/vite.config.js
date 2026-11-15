@@ -4,6 +4,8 @@ import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  // Tests never use a real key from a local .env file, so they never make a live DONKI request.
+  test: { env: { VITE_NASA_API_KEY: '' } },
   plugins: [
     react(),
     tailwindcss(),

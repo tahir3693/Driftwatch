@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { getReadings } from './readings.js'
 import { loadBmdState, localToday } from './bmdState.js'
 import { seedScenario } from './seedScenario.js'
+import { getSpaceWeather } from './spaceWeather.js'
 import { loadCutoffs } from '../data/cutoffs.js'
 import { getModuleDescriptors } from '../data/moduleList.js'
 import { loadIndicatorRules } from '../data/indicatorRules.js'
@@ -63,7 +64,7 @@ export async function buildDashboardData(now) {
   }
 
   const cutoffs = loadCutoffs()
-  const ctx = { cutoffs, now, bmd: { state: loadBmdState(), today: localToday(new Date(now)) } }
+  const ctx = { cutoffs, now, bmd: { state: loadBmdState(), today: localToday(new Date(now)) }, spaceWeather: getSpaceWeather() }
   const { alerts, errors, warnings } = runModules(getModuleDescriptors(), readingsByDomain, ctx)
   for (const err of errors) console.error('Driftwatch module error', err)
   for (const w of warnings) console.warn('Driftwatch module warning', w)

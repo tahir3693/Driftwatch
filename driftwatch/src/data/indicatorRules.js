@@ -14,12 +14,12 @@ export function loadIndicatorRules() {
     for (const [indicator, rule] of Object.entries(rules.indicators ?? {})) out[`${domain}/${indicator}`] = rule
   }
   // BMD and strength tracker (sub-module of gravity): one entry per measure.
-  // The alert value is the raw measurement, so the unit comes from the measure, not the rule.
+  // Ratio indicators: the alert value is the ratio to the baseline, so the unit is the rule's unit.
   for (const rule of Object.values(bmd.indicators ?? {})) {
     for (const measure of rule.measures ?? []) {
       out[`${bmd.domain}/${measure.indicator}`] = {
         label: measure.label,
-        unit: measure.unit,
+        unit: rule.kind === 'baseline_ratio' ? rule.unit : measure.unit,
         howToMeasure: rule.howToMeasure,
         whyItMatters: rule.whyItMatters,
         action: rule.action,

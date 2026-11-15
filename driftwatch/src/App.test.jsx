@@ -116,6 +116,26 @@ describe('App', () => {
     expect(screen.getAllByText('Simulated data. Decision support, not a medical device.')).toHaveLength(1)
   })
 
+  it('opens the BMD and strength screen from the dashboard button, in the app, and goes back', async () => {
+    render(<App />)
+    await userEvent.click(await screenButton('BMD and strength'))
+    expect(screen.getByRole('heading', { level: 1, name: 'Driftwatch' })).toBeTruthy()
+    expect(screen.getByRole('heading', { level: 2, name: 'BMD and strength' })).toBeTruthy()
+    expect(screen.getByRole('navigation', { name: 'Main' })).toBeTruthy()
+    const frame = screen.getByTitle('BMD and strength tracker')
+    expect(frame.getAttribute('src')).toBe('/bmd-strength/index.html')
+    expect(screen.getAllByText('Simulated data. Decision support, not a medical device.')).toHaveLength(1)
+    expect(document.querySelector('a[target="_blank"]')).toBeNull()
+    await userEvent.click(screen.getByRole('button', { name: 'Back to dashboard' }))
+    expect(await screen.findByRole('button', { name: /Head and lungs/ })).toBeTruthy()
+    expect(screen.queryByTitle('BMD and strength tracker')).toBeNull()
+  })
+  it('opens the same screen from the Bones and muscles detail', async () => {
+    render(<App />)
+    await userEvent.click(await screen.findByRole('button', { name: /Bones and muscles/ }))
+    await userEvent.click(screen.getByRole('button', { name: 'Open BMD and strength tracker' }))
+    expect(screen.getByTitle('BMD and strength tracker')).toBeTruthy()
+  })
   it('saves an Environment check-in, shows the confirmation and the streak, and keeps one Reading set', async () => {
     render(<App />)
     await userEvent.click(await screenButton('Check-in'))

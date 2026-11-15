@@ -30,20 +30,21 @@ describe('loadIndicatorRules', () => {
     }
   })
 
-  it('has an entry per BMD and strength measure with the measure unit', () => {
+  it('has an entry per BMD and strength measure', () => {
     const measures = Object.values(bmd.indicators).flatMap((r) => r.measures)
     expect(measures).toHaveLength(6)
     for (const m of measures) {
       const rule = rules[`gravity/${m.indicator}`]
       expect(rule, m.indicator).toBeDefined()
       expect(rule.label).toBe(m.label)
-      expect(rule.unit).toBe(m.unit)
     }
-    expect(rules['gravity/hip_bmd'].unit).toBe('g/cm²')
-    expect(rules['gravity/deadlift_strength'].unit).toBe('kg')
+  })
+  it('uses the ratio unit for the ratio indicators, because the alert value is the ratio to baseline', () => {
+    for (const k of ['hip_bmd', 'lumbar_spine_bmd', 'deadlift_strength', 'bench_press_strength']) {
+      expect(rules[`gravity/${k}`].unit, k).toBe('ratio of baseline')
+    }
     expect(rules['gravity/strength_training_missed_days'].unit).toBe('days')
   })
-
   it('leaves an unknown key absent', () => {
     expect(rules['gravity/nope']).toBeUndefined()
   })
