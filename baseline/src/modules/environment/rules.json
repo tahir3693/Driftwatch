@@ -1,0 +1,102 @@
+﻿{
+  "module": "environment",
+  "indicators": {
+    "cabin_co2_mmHg": {
+      "label": "Cabin CO2 (1-hour average)",
+      "unit": "mmHg",
+      "bad_direction": "high",
+      "bands": {
+        "normal": { "value_max": 2.8 },
+        "watch": { "value_min": 2.8, "value_max": 3 },
+        "act": { "value_min": 3 }
+      },
+      "why": "Possible high CO2: the 1-hour average is {delta} {unit} from the nearest limit.",
+      "action": "Move to open airflow, check fans, re-test in an hour. Tell the flight surgeon if it stays high.",
+      "howToMeasure": "Read the cabin CO2 sensor and log the 1-hour average partial pressure in mmHg.",
+      "whyItMatters": "NASA limits the 1-hour average CO2 in the habitable volume to 3 mmHg. Most CO2 symptoms are not confirmed in flight, so treat an alert as a possible cause only.",
+      "source": "NASA OCHMO-TB-004 (CO2 technical brief) for the 3 mmHg limit; the 2.8 mmHg Watch edge and the Normal, Watch and Act mapping are design values"
+    },
+    "cabin_co2_7day_avg_mmHg": {
+      "label": "Cabin CO2 (7-day average)",
+      "unit": "mmHg",
+      "bad_direction": "high",
+      "bands": {
+        "normal": { "value_max": 2.5 },
+        "watch": { "value_min": 2.5 },
+        "act": null
+      },
+      "why": "Possible slow CO2 build-up: the 7-day average is {delta} {unit} from the 2.5 mmHg line.",
+      "action": "Check fans and filters, increase airflow, and re-test. Tell the flight surgeon if headaches are logged.",
+      "howToMeasure": "Log the average of the last 7 days of cabin CO2 in mmHg.",
+      "whyItMatters": "NASA notes that a 7-day average below 2.5 mmHg keeps headache incidence under 1%.",
+      "source": "NASA OCHMO-TB-004 (CO2 technical brief) for 2.5 mmHg; band mapping is a design value"
+    },
+    "symptom_check": {
+      "label": "Symptom check",
+      "unit": "code",
+      "bad_direction": "high",
+      "bands": {
+        "normal": { "value_max": 1 },
+        "watch": { "value_min": 1, "value_max": 2 },
+        "act": { "value_min": 2 }
+      },
+      "why": "Possible CO2 or cabin-air symptoms are logged (code {delta} from none).",
+      "action": "Re-test cabin air, move to open airflow, and tell the flight surgeon if symptoms persist.",
+      "howToMeasure": "Enter 0 if none logged. Enter 1 for headache or vision change on 2 or more days. Enter 2 if it persists after the suggested action, or for nausea with fatigue.",
+      "whyItMatters": "Headache and vision change can have several causes, including fluid shifts; the log helps the flight surgeon decide.",
+      "source": "design value"
+    },
+    "body_temperature": {
+      "label": "Body temperature",
+      "unit": "deg C",
+      "bad_direction": "high",
+      "bands": {
+        "normal": { "z_max": 2 },
+        "watch": { "z_min": 2 },
+        "act": null
+      },
+      "why": "Temperature is {delta} {unit} above your usual, more than 2 standard deviations.",
+      "action": "Re-measure, rest, and tell the flight surgeon if it stays up for 3 days.",
+      "howToMeasure": "Take your temperature each morning and log it.",
+      "whyItMatters": "A rise from your own baseline, together with poor sleep, can be an early sign of a possible infection-like problem.",
+      "source": "design value"
+    },
+    "sleep_hours": {
+      "label": "Sleep",
+      "unit": "h",
+      "bad_direction": "low",
+      "bands": {
+        "normal": { "z_min": -2 },
+        "watch": { "z_max": -2 },
+        "act": null
+      },
+      "why": "Sleep is {delta} {unit} below your usual, more than 2 standard deviations.",
+      "action": "Protect a full sleep period tonight and tell the flight surgeon if it stays low for 3 days.",
+      "howToMeasure": "Log the hours you slept each morning.",
+      "whyItMatters": "Judged against your own baseline, not an 8-hour rule. Short sleep together with a temperature rise can point to a possible infection-like problem.",
+      "source": "design value"
+    }
+  },
+  "patterns": {
+    "infection_like": {
+      "needs": ["body_temperature", "sleep_hours"],
+      "min_in_watch": 2,
+      "for_days": 3,
+      "result": "watch",
+      "escalate": false,
+      "why": "Temperature is up and sleep is down for 3 days: a possible infection-like pattern.",
+      "action": "Rest, recheck temperature, and tell the flight surgeon.",
+      "source": "design value"
+    },
+    "infection_like_with_symptoms": {
+      "needs": ["body_temperature", "sleep_hours", "symptom_check"],
+      "min_in_watch": 3,
+      "for_days": 3,
+      "result": "act",
+      "escalate": true,
+      "why": "Temperature up, sleep down and symptoms logged together for 3 days: a possible infection-like problem that needs attention.",
+      "action": "Contact the flight surgeon now.",
+      "source": "design value"
+    }
+  }
+}

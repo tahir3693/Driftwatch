@@ -1,0 +1,62 @@
+{
+  "module": "sample",
+  "indicators": {
+    "z_indicator": {
+      "label": "Z indicator",
+      "unit": "units",
+      "bad_direction": "high",
+      "bands": {
+        "normal": { "z_max": 1 },
+        "watch": { "z_min": 1, "z_max": 2 },
+        "act": { "z_min": 2 }
+      },
+      "why": "Z indicator is {delta} {unit} from your usual.",
+      "action": "Re-measure and tell the flight surgeon if it stays off.",
+      "howToMeasure": "Log the value by hand entry.",
+      "whyItMatters": "A change from your own baseline can be an early sign.",
+      "source": "design value"
+    },
+    "abs_z_indicator": {
+      "label": "Absolute z indicator",
+      "unit": "units",
+      "bad_direction": "both",
+      "bands": {
+        "normal": { "abs_z_max": 2 },
+        "watch": { "abs_z_min": 2 },
+        "act": null
+      },
+      "why": "Absolute z indicator is {delta} {unit} from your usual.",
+      "action": "Rest and re-measure.",
+      "howToMeasure": "Log the value by hand entry.",
+      "whyItMatters": "A change in either direction from your own baseline matters.",
+      "source": "design value"
+    },
+    "value_indicator": {
+      "label": "Value indicator",
+      "unit": "sessions",
+      "bad_direction": "low",
+      "bands": {
+        "normal": { "value_min": 6 },
+        "watch": { "value_min": 4, "value_max": 6 },
+        "act": { "value_max": 4 }
+      },
+      "why": "Value indicator is {delta} {unit} from the nearest limit.",
+      "action": "Schedule more sessions this week.",
+      "howToMeasure": "Count the sessions in the last 7 days.",
+      "whyItMatters": "Low values over time raise risk.",
+      "source": "design value"
+    }
+  },
+  "patterns": {
+    "sample_pattern": {
+      "needs": ["z_indicator", "abs_z_indicator"],
+      "min_in_watch": 2,
+      "for_days": 3,
+      "result": "watch",
+      "escalate": false,
+      "why": "Two indicators have stayed in Watch for 3 days.",
+      "action": "Review the contributing indicators with the flight surgeon.",
+      "source": "design value"
+    }
+  }
+}
