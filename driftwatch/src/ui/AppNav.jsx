@@ -2,6 +2,7 @@ const ITEMS = [
   { view: 'dashboard', label: 'Dashboard' },
   { view: 'checkin', label: 'Check-in' },
   { view: 'report', label: 'Ground report' },
+  { view: 'sources', label: 'Sources' },
 ]
 
 /** Main navigation. Props: { view, onChange(view) }. Hidden in print. */

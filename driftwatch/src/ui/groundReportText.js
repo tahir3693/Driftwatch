@@ -1,7 +1,7 @@
 // Fixed wording for the Ground report. Alert text (why, action, source) is never kept here:
 // the report shows it exactly as the modules supplied it.
 export const GROUND_REPORT_TITLE = 'Ground report'
-export const GROUND_REPORT_SIMULATED_LINE = 'All data in this report is simulated. Decision support only, not a medical device.'
+export const GROUND_REPORT_SIMULATED_LINE = 'All data in this report is simulated. Decision support, not a medical device.'
 export const NO_ACTIVE_ALERTS = 'No active alerts in the last 7 days.'
 export const NO_ESCALATIONS = 'No open escalations.'
 export const NO_READINGS = 'No readings in the last 7 days.'

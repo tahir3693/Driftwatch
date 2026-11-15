@@ -25,6 +25,20 @@ import {
   moreReadingsText,
 } from './groundReportText.js'
 
+/**
+ * The module's active alerts as listed on the sheet. A `<domain>_overall` alert is left out
+ * only when another alert of the same module has the same `why` and `action`, so the entry
+ * would repeat it word for word. Its status and urgency stay in the Module status table.
+ */
+export function withoutDuplicateOverall(module) {
+  const overall = `${module.domain}_overall`
+  return module.activeAlerts.filter(
+    (a) =>
+      a.indicator !== overall ||
+      !module.activeAlerts.some((b) => b !== a && b.why === a.why && b.action === a.action),
+  )
+}
+
 const printWindow = () => {
   if (typeof window !== 'undefined') window.print?.()
 }
@@ -163,32 +177,34 @@ export default function GroundReport({ data, now, config = loadReportConfig(), o
           {withAlerts.length === 0 ? (
             <p>{NO_ACTIVE_ALERTS}</p>
           ) : (
-            withAlerts.map((m) => (
-              <div key={m.domain}>
-                <h3 className="mt-2 text-lg font-semibold">{m.label}</h3>
-                <ul>
-                  {m.activeAlerts.map((a) => (
-                    <li key={`${a.domain}/${a.indicator}`} className="alert-entry mt-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <StatusBadge status={a.status} />
-                        <span className="font-semibold">{a.indicator}</span>
-                        <span>Urgency {a.urgency}</span>
-                      </div>
-                      <p>
-                        <strong>Why:</strong> <span>{a.why}</span>
-                      </p>
-                      <p>
-                        <strong>{RECOMMENDED_ACTION_LABEL}:</strong> <span>{a.action}</span>
-                      </p>
-                      <p>
-                        <strong>Source:</strong> <span>{a.source}</span>
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-                {m.moreAlerts > 0 ? <p>{moreAlertsText(m.moreAlerts)}</p> : null}
-              </div>
-            ))
+            <div className="alerts-columns">
+              {withAlerts.map((m) => (
+                <div key={m.domain} className="alerts-module">
+                  <h3 className="mt-2 text-lg font-semibold">{m.label}</h3>
+                  <ul>
+                    {withoutDuplicateOverall(m).map((a) => (
+                      <li key={`${a.domain}/${a.indicator}`} className="alert-entry mt-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <StatusBadge status={a.status} />
+                          <span className="font-semibold">{a.indicator}</span>
+                          <span>Urgency {a.urgency}</span>
+                        </div>
+                        <p>
+                          <strong>Why:</strong> <span>{a.why}</span>
+                        </p>
+                        <p>
+                          <strong>{RECOMMENDED_ACTION_LABEL}:</strong> <span>{a.action}</span>
+                        </p>
+                        <p>
+                          <strong>Source:</strong> <span>{a.source}</span>
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                  {m.moreAlerts > 0 ? <p>{moreAlertsText(m.moreAlerts)}</p> : null}
+                </div>
+              ))}
+            </div>
           )}
         </section>
 

@@ -1,4 +1,4 @@
-﻿{
+{
   "module": "radiation",
   "kind": "function",
   "note": "The scoring lives in radiation-engine.js. This file lists its limits and marks the source of each number. It has no indicators because the engine is wrapped as a plain function.",
@@ -36,6 +36,6 @@
     },
     "urgency_cutoffs": { "watch_from": 30, "act_from": 60, "source": "design value" },
     "escalate_at_fraction_of_career_dose": { "value": 0.8, "source": "design value" },
-    "quiet_flux_placeholder_pfu": { "value": 1, "source": "design value" }
+    "quiet_flux_reference_pfu": { "value": 1, "source": "design value" }
   }
 }

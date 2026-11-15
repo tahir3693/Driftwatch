@@ -1,4 +1,4 @@
-﻿import { describe, it, expect } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { evaluate, simulate, RULES } from './radiation-engine.js'
 import { evaluate as evaluateModule } from './index.js'
 import descriptor from './index.js'
@@ -68,7 +68,7 @@ describe('radiation module', () => {
     expect(watchDose.status).toBe('watch')
     expect(watchDose.action).toBe('Review your remaining dose budget with the ground team.')
     const actFlux = evaluate({ ...quiet, protonFlux_pfu: 1500 }).find((a) => a.indicator === 'solar_proton_flux')
-    expect(actFlux.action).toBe("Follow your mission's solar particle event and shelter procedure.")
+    expect(actFlux.action).toBe("Follow your mission's solar particle event and shelter procedure, and tell the flight surgeon.")
   })
 
   it('cites V1 4030 for the career limit', () => {
@@ -96,7 +96,7 @@ describe('radiation module', () => {
     }
     expect(d.urgency_cutoffs).toMatchObject({ watch_from: RULES.bands.watch, act_from: RULES.bands.act })
     expect(d.escalate_at_fraction_of_career_dose.value).toBe(RULES.escalateAtFraction)
-    for (const key of ['max_points', 'symptom_points', 'flux_steps_pfu_10MeV_and_above', 'urgency_cutoffs', 'escalate_at_fraction_of_career_dose', 'quiet_flux_placeholder_pfu']) {
+    for (const key of ['max_points', 'symptom_points', 'flux_steps_pfu_10MeV_and_above', 'urgency_cutoffs', 'escalate_at_fraction_of_career_dose', 'quiet_flux_reference_pfu']) {
       expect(d[key].source).toBe('design value')
     }
   })

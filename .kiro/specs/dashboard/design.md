@@ -204,12 +204,12 @@ helpSections(rule)
 
 ### ui/StatusBadge.jsx and ui/SimulatedBanner.jsx
 
-`StatusBadge({ status })` renders the icon shape, the Status_Label text and the colour from `STATUS_STYLE`. `SimulatedBanner` renders the fixed text "Simulated data. Decision support only, not a medical device." in a full-width bar with no buttons. It is rendered by `Dashboard` outside any conditional.
+`StatusBadge({ status })` renders the icon shape, the Status_Label text and the colour from `STATUS_STYLE`. `SimulatedBanner` renders the fixed text "Simulated data. Decision support, not a medical device." in a full-width bar with no buttons. It is rendered by `Dashboard` outside any conditional.
 
 ### ui/wording.js
 
 ```js
-export const DISCLAIMER = 'Simulated data. Decision support only, not a medical device.'
+export const DISCLAIMER = 'Simulated data. Decision support, not a medical device.'
 export const REFERENCE_DOSE_TEXT = 'NASA design requirement for a reference solar particle event'
 export const CAREER_DOSE_TEXT = 'NASA career effective dose requirement'
 ```

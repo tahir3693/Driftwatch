@@ -55,20 +55,50 @@ describe('App', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'Driftwatch' })).toBeTruthy()
     expect(screen.getByText('Catch the drift before it becomes a problem.')).toBeTruthy()
     expect(screen.getByTestId('offline-indicator')).toBeTruthy()
-    expect(screen.getAllByText('Simulated data. Decision support only, not a medical device.')).toHaveLength(1)
+    expect(screen.getAllByText('Simulated data. Decision support, not a medical device.')).toHaveLength(1)
     for (const name of [/Head and lungs/, /Bones and muscles/, /Whole body/]) {
       expect(await screen.findByRole('button', { name })).toBeTruthy()
     }
   })
 
-  it('loads the simulated scenario with one click and shows an escalating region', async () => {
+  it('shows the Play scenario button on the first screen', async () => {
     render(<App />)
-    const load = await screen.findByRole('button', { name: 'Load simulated 14-day scenario' })
-    await userEvent.click(load)
-    expect(await screen.findByRole('button', { name: 'Whole body: Act' })).toBeTruthy()
-    expect(screen.queryByRole('button', { name: 'Load simulated 14-day scenario' })).toBeNull()
-    await userEvent.click(screen.getByRole('button', { name: 'Whole body: Act' }))
-    expect(screen.getAllByText('Escalate: contact the flight surgeon or crew support.').length).toBeGreaterThan(0)
+    expect(await screen.findByRole('button', { name: 'Play scenario' })).toBeTruthy()
+    expect(screen.getByTestId('scenario-day').textContent).toBe('Not started: showing stored data')
+  })
+
+  it('drives the body map and detail view with the scenario: day 11 Radiation Act, urgency 63, escalate', async () => {
+    render(<App />)
+    const next = await screen.findByRole('button', { name: 'Next day' })
+    for (let i = 0; i < 10; i++) await userEvent.click(next)
+    expect(screen.getByTestId('scenario-day').textContent).toBe('Day 10 of 14 (Simulated)')
+    expect(screen.getByRole('button', { name: 'Head and lungs: Watch' })).toBeTruthy()
+    await userEvent.click(screen.getByRole('button', { name: 'Head and lungs: Watch' }))
+    await userEvent.click(next)
+    expect(screen.getByTestId('scenario-day').textContent).toBe('Day 11 of 14 (Simulated)')
+    const region = screen.getByRole('button', { name: 'Head and lungs: Act' })
+    expect(region.getAttribute('aria-pressed')).toBe('true')
+    // The selected region's detail view follows the day: the radiation overall card is Act, 63, escalating.
+    const card = screen.getByRole('article', { name: 'Overall: radiation: Act' })
+    expect(within(card).getByText('Urgency:').nextElementSibling.textContent).toBe('63')
+    expect(within(card).getByText('Escalate: contact the flight surgeon or crew support.')).toBeTruthy()
+    for (const label of ['Why', 'Suggested action', 'Source']) expect(within(card).getByText(label)).toBeTruthy()
+    await userEvent.click(next)
+    expect(screen.getByRole('button', { name: 'Head and lungs: Watch' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Whole body: Act' })).toBeTruthy()
+    await userEvent.click(screen.getByRole('button', { name: 'Reset' }))
+    expect(screen.getByTestId('scenario-day').textContent).toBe('Not started: showing stored data')
+    expect(screen.queryByRole('button', { name: 'Whole body: Act' })).toBeNull()
+  })
+
+  it('opens the Sources view with the NASA and NOAA groups', async () => {
+    render(<App />)
+    const navigation = within(await screen.findByRole('navigation', { name: 'Main' }))
+    await userEvent.click(navigation.getByRole('button', { name: 'Sources' }))
+    expect(screen.getByRole('heading', { name: 'Sources' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'NASA documents' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'NOAA space weather' })).toBeTruthy()
+    expect(screen.getAllByText('Simulated data. Decision support, not a medical device.')).toHaveLength(1)
   })
 
   it('switches to the check-in screen and back, with one disclaimer on each screen', async () => {
@@ -80,10 +110,10 @@ describe('App', () => {
     expect(screen.getAllByRole('form').map((f) => f.querySelector('h2').textContent)).toEqual(['Environment', 'Radiation', 'Isolation', 'Gravity', 'Nutrition'])
     expect(screen.getByRole('heading', { level: 1, name: 'Driftwatch' })).toBeTruthy()
     expect(screen.getByTestId('offline-indicator')).toBeTruthy()
-    expect(screen.getAllByText('Simulated data. Decision support only, not a medical device.')).toHaveLength(1)
+    expect(screen.getAllByText('Simulated data. Decision support, not a medical device.')).toHaveLength(1)
     await userEvent.click(await screenButton('Dashboard'))
     expect(await screen.findByRole('button', { name: /Head and lungs/ })).toBeTruthy()
-    expect(screen.getAllByText('Simulated data. Decision support only, not a medical device.')).toHaveLength(1)
+    expect(screen.getAllByText('Simulated data. Decision support, not a medical device.')).toHaveLength(1)
   })
 
   it('saves an Environment check-in, shows the confirmation and the streak, and keeps one Reading set', async () => {
@@ -130,7 +160,7 @@ describe('App', () => {
 })
 
 describe('Ground report in the app', () => {
-  const LINE = 'All data in this report is simulated. Decision support only, not a medical device.'
+  const LINE = 'All data in this report is simulated. Decision support, not a medical device.'
   const nav = () => within(screen.getByRole('navigation', { name: 'Main' }))
   beforeEach(() => {
     spies.calls = []
@@ -155,7 +185,7 @@ describe('Ground report in the app', () => {
     expect(await screen.findByRole('heading', { level: 1, name: 'Ground report' })).toBeTruthy()
     expect(screen.getByText(LINE)).toBeTruthy()
     expect(nav().getByRole('button', { name: 'Ground report' }).getAttribute('aria-current')).toBe('page')
-    expect(screen.getAllByText('Simulated data. Decision support only, not a medical device.')).toHaveLength(1)
+    expect(screen.getAllByText('Simulated data. Decision support, not a medical device.')).toHaveLength(1)
     expect(screen.getByRole('button', { name: 'Print or Save as PDF' })).toBeTruthy()
     await userEvent.click(nav().getByRole('button', { name: 'Dashboard' }))
     expect(await screen.findByRole('button', { name: /Head and lungs/ })).toBeTruthy()
@@ -193,11 +223,16 @@ describe('Ground report in the app', () => {
     expect(fetchStub).not.toHaveBeenCalled()
   })
 
-  it('shows the loaded demo scenario in the report: Isolation Act, its escalations and last readings', async () => {
+  it('shows the played scenario day in the report: Isolation Act, its escalations and last readings', async () => {
     render(<App />)
-    await userEvent.click(await screen.findByRole('button', { name: 'Load simulated 14-day scenario' }))
-    expect(await screen.findByRole('button', { name: 'Whole body: Act' })).toBeTruthy()
+    const next = await screen.findByRole('button', { name: 'Next day' })
+    for (let i = 0; i < 14; i++) await userEvent.click(next)
+    expect(screen.getByRole('button', { name: 'Whole body: Act' })).toBeTruthy()
+    spies.calls = []
     await userEvent.click(nav().getByRole('button', { name: 'Ground report' }))
+    // During the scenario the report uses the scenario day and does not refresh the stored data.
+    expect(spies.calls).toHaveLength(0)
+    expect(screen.getByRole('button', { name: 'Print or Save as PDF' }).disabled).toBe(false)
     const esc = (await screen.findByRole('heading', { level: 2, name: 'Open escalations' })).closest('section')
     expect(within(esc).getAllByRole('listitem').map((li) => li.textContent)).toEqual([
       'Isolation: combined_strain, Urgency 60',

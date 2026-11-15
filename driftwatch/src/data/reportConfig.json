@@ -1,7 +1,7 @@
 {
   "windowDays": 7,
   "maxActiveAlertsPerModule": 6,
-  "maxLastReadings": 24,
+  "maxLastReadings": 12,
   "moduleLabels": {
     "radiation": "Radiation",
     "isolation": "Isolation",

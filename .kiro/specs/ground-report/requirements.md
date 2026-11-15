@@ -14,8 +14,8 @@ Assumptions (to be confirmed in the design):
 2. The 7-day window is inclusive at both ends: a Reading is in the Report_Window when `now - 7 days <= timestamp <= now`, with `7 days = 604800000` ms. A Reading after `now` is outside the window.
 3. The app has no stored log of actions the astronaut took. In v1, "actions taken" is shown as the recommended `action` of each Active_Alert. The report does not claim that an action was carried out.
 4. "Open escalations" are the Active_Alerts whose `escalate` is `true`. The app has no way to close an escalation in v1, so every current escalating Alert is open.
-5. The Isolation module is not in the repo yet, so it produces no Alerts and shows "No data". The same rule covers any module without Alerts.
-6. The report is capped at 6 Active_Alerts per module and 1 last reading per indicator, with at most 24 Last_Reading rows in total. Excess items are replaced by an "and N more" line. The design may adjust these numbers when it fixes the page layout.
+5. A module without Alerts (for example `system`, which has no module code) shows "No data".
+6. The report is capped at 6 Active_Alerts per module and 1 last reading per indicator, with at most 12 Last_Reading rows in total (set from the print preview check). Excess items are replaced by an "and N more" line. The design may adjust these numbers when it fixes the page layout.
 7. Page size is A4 or Letter. Print is black and white safe. Text is at least 9 pt in print.
 8. Units for Last_Reading come from the Indicator_Rule (`unit`) supplied with the data. A missing unit shows no unit text.
 
@@ -40,7 +40,7 @@ Assumptions (to be confirmed in the design):
 - **Open_Escalation**: An Active_Alert with `escalate` equal to `true`.
 - **Now**: The evaluation time in epoch milliseconds passed to the Report_Builder. The Report_Builder reads no system clock.
 - **Generated_Timestamp**: The text of `now` shown on the report as a local date and time.
-- **Simulated_Line**: The exact text "All data in this report is simulated. Decision support only, not a medical device."
+- **Simulated_Line**: The exact text "All data in this report is simulated. Decision support, not a medical device."
 - **Print_Button**: The button on the Ground_Report_Screen that opens the browser print dialog.
 - **Print_Stylesheet**: The CSS inside `@media print` that formats the Ground_Report for one page.
 - **Reference_Dose_Text**: The wording "NASA design requirement for a reference solar particle event", used whenever the Ground_Report mentions the 250 mSv value.
@@ -54,7 +54,7 @@ Assumptions (to be confirmed in the design):
 #### Acceptance Criteria
 
 1. WHEN `buildGroundReport` is called with Alerts, Readings, rules and `now`, THE Report_Builder SHALL return a Report_Model without reading the system clock, Dexie, the network or the DOM.
-2. THE Report_Builder SHALL return identical Report_Models for identical inputs, regardless of the order of the Alerts and Readings supplied.
+2. THE Report_Builder SHALL return identical Report_Models for identical inputs, regardless of the order of the Alerts and Readings supplied, except for Readings of one indicator with equal timestamps, where requirement 5.2 applies.
 3. THE Report_Builder SHALL not modify the Alerts, Readings or rules passed in.
 4. THE Report_Model SHALL contain exactly one Module_Summary for each of the six Domains, in the order radiation, isolation, gravity, environment, nutrition, system.
 5. THE Report_Model SHALL contain the Report_Window start and end, equal to `now - 604800000` and `now`.
@@ -67,7 +67,7 @@ Assumptions (to be confirmed in the design):
 #### Acceptance Criteria
 
 1. THE Report_Builder SHALL set the Module_Status of each Domain to the highest Alert `status` among all Alerts of that Domain, including the `<domain>_overall` Alert.
-2. IF a Domain has no Alert, THEN THE Report_Builder SHALL set the Module_Status to "No data" and the Module_Urgency to "No data".
+2. IF a Domain has no Alert, THEN THE Report_Builder SHALL set the Module_Status and the Module_Urgency to null, and THE Ground_Report SHALL show "No data" for both.
 3. THE Report_Builder SHALL set the Module_Urgency of each Domain to the highest Alert `urgency` among all Alerts of that Domain.
 4. WHEN the same Alerts are supplied in a different order, THE Report_Builder SHALL return the same Module_Status and Module_Urgency for every Domain.
 5. THE Ground_Report SHALL show, for each of the six Domains, the Module_Label, the Status_Label and the Module_Urgency.
@@ -116,7 +116,7 @@ Assumptions (to be confirmed in the design):
 
 #### Acceptance Criteria
 
-1. THE Ground_Report SHALL show the Simulated_Line with the exact text "All data in this report is simulated. Decision support only, not a medical device."
+1. THE Ground_Report SHALL show the Simulated_Line with the exact text "All data in this report is simulated. Decision support, not a medical device."
 2. THE Ground_Report SHALL show the Simulated_Line on screen and in print, with no control that hides it.
 3. THE Ground_Report SHALL show the Generated_Timestamp and the Report_Window start and end as local dates and times.
 4. THE Ground_Report_Screen SHALL take `now` as a prop supplied by the application and SHALL NOT read the system clock inside the Report_Builder.
@@ -140,9 +140,9 @@ Assumptions (to be confirmed in the design):
 
 #### Acceptance Criteria
 
-1. THE Report_Builder SHALL limit each Domain's listed Active_Alerts to 6, and the Last_Reading rows to 24 in total, in order of the most recent Reading time first.
+1. THE Report_Builder SHALL limit each Domain's listed Active_Alerts to 6, and the Last_Reading rows to 12 in total, in order of the most recent Reading time first.
 2. WHEN the number of Active_Alerts of a Domain exceeds 6, THE Ground_Report SHALL show the line "and N more" for that Domain, where N is the number not listed.
-3. WHEN the number of Last_Reading rows exceeds 24, THE Ground_Report SHALL show the line "and N more readings" where N is the number not listed.
+3. WHEN the number of Last_Reading rows exceeds 12, THE Ground_Report SHALL show the line "and N more readings" where N is the number not listed.
 4. WHEN any list is capped, THE Ground_Report SHALL show the text "Lists are shortened to fit one page. Open the dashboard for the full detail."
 5. THE Report_Builder SHALL always list every Open_Escalation, so that a cap never hides an escalation.
 6. THE Report_Model SHALL contain the total counts and the listed counts of Active_Alerts and Last_Reading rows, so that the capping is testable.

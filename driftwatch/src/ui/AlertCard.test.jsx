@@ -49,7 +49,9 @@ describe('AlertCard', () => {
   it('calls onOpenHelp with the button from the Help button', async () => {
     const onOpenHelp = vi.fn()
     render(<AlertCard alert={alert} rule={rule} onOpenHelp={onOpenHelp} />)
-    const btn = screen.getByRole('button', { name: 'Help' })
+    const btn = screen.getByRole('button', { name: /^Help for / })
+    expect(btn.textContent.startsWith('Help')).toBe(true)
+    expect(btn.getAttribute('aria-label')).toBeNull() // the visible word Help starts the accessible name
     expect(btn.className).toContain('min-h-11')
     await userEvent.click(btn)
     expect(onOpenHelp).toHaveBeenCalledWith(btn)

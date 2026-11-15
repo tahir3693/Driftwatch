@@ -18,7 +18,7 @@ Each helper and component gets a unit or component test beside it (`*.test.js` o
 - [x] 2. Shared data, wording and status style
   - [x] 2.1 Create the region mapping and fixed wording
     - Create `src/data/regionMapping.json` with the three regions in Tab order: `head_and_lungs` ("Head and lungs": radiation, environment), `bones_and_muscles` ("Bones and muscles": gravity), `whole_body` ("Whole body": isolation, nutrition, system)
-    - Create `src/ui/wording.js` exporting `DISCLAIMER` ("Simulated data. Decision support only, not a medical device."), `REFERENCE_DOSE_TEXT` ("NASA design requirement for a reference solar particle event") and `CAREER_DOSE_TEXT` ("NASA career effective dose requirement")
+    - Create `src/ui/wording.js` exporting `DISCLAIMER` ("Simulated data. Decision support, not a medical device."), `REFERENCE_DOSE_TEXT` ("NASA design requirement for a reference solar particle event") and `CAREER_DOSE_TEXT` ("NASA career effective dose requirement")
     - Write `src/data/regionMapping.test.js`: three regions in order, and every value of `DOMAINS` appears in exactly one region
     - _Requirements: 1.1, 2.2, 2.8, 8.2, 8.4, 8.5_
 

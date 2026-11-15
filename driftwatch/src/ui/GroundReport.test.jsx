@@ -277,7 +277,7 @@ describe('GroundReport print scope and title', () => {
 
   it('shows exactly one simulated banner with the exact text', () => {
     renderReport()
-    expect(screen.getAllByText('Simulated data. Decision support only, not a medical device.')).toHaveLength(1)
+    expect(screen.getAllByText('Simulated data. Decision support, not a medical device.')).toHaveLength(1)
   })
 
   describe('document title', () => {

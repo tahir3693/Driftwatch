@@ -3,20 +3,29 @@ import OfflineIndicator from './ui/OfflineIndicator.jsx'
 import Dashboard from './ui/Dashboard.jsx'
 import CheckInScreen from './ui/CheckInScreen.jsx'
 import GroundReport from './ui/GroundReport.jsx'
+import SourcesPanel from './ui/SourcesPanel.jsx'
+import ScenarioControls from './ui/ScenarioControls.jsx'
 import AppNav from './ui/AppNav.jsx'
 import { useDashboardData } from './store/dashboardData.js'
 import { useCheckIn } from './store/useCheckIn.js'
+import { useScenarioPlayer } from './store/scenarioPlayer.js'
+
 export default function App() {
-  const { data, refresh, loadScenario } = useDashboardData()
+  const { data: stored, refresh } = useDashboardData()
   const { streak, submit } = useCheckIn(refresh)
-  const [view, setView] = useState('dashboard') // 'dashboard' | 'checkin' | 'report'
+  const scenario = useScenarioPlayer()
+  const [view, setView] = useState('dashboard') // 'dashboard' | 'checkin' | 'report' | 'sources'
   const [reportNow, setReportNow] = useState(null)
   const [preparing, setPreparing] = useState(false)
   const openCount = useRef(0)
 
+  // While the scenario plays, every screen shows the scenario day; otherwise the stored data.
+  const data = scenario.data ?? stored
+
   // Opening the report reads the clock once, so the alerts and the 7-day window share one `now`.
+  // During the scenario the report uses the scenario day's time and needs no refresh.
   function changeView(next) {
-    if (next !== 'report') {
+    if (next !== 'report' || scenario.data) {
       setView(next)
       return
     }
@@ -34,6 +43,18 @@ export default function App() {
       })
   }
 
+  const controls = (
+    <ScenarioControls
+      day={scenario.day}
+      playing={scenario.playing}
+      finished={scenario.finished}
+      onPlay={scenario.play}
+      onPause={scenario.pause}
+      onNext={scenario.next}
+      onReset={scenario.reset}
+    />
+  )
+
   return (
     <main className="min-h-screen overflow-x-hidden bg-slate-900 p-4 text-base text-slate-100">
       <header className="no-print flex flex-wrap items-center justify-between gap-3">
@@ -45,9 +66,11 @@ export default function App() {
       {view === 'checkin' ? (
         <CheckInScreen onSubmit={submit} streak={streak} onShowDashboard={() => changeView('dashboard')} />
       ) : view === 'report' ? (
-        <GroundReport data={data} now={reportNow} refreshing={preparing} />
+        <GroundReport data={data} now={scenario.data ? scenario.now : reportNow} refreshing={scenario.data ? false : preparing} />
+      ) : view === 'sources' ? (
+        <SourcesPanel />
       ) : (
-        <Dashboard data={data} onLoadScenario={loadScenario} onShowCheckIn={() => changeView('checkin')} />
+        <Dashboard data={data} onShowCheckIn={() => changeView('checkin')} scenarioControls={controls} />
       )}
     </main>
   )

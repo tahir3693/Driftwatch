@@ -59,7 +59,8 @@ export default function AlertCard({ alert, rule, onOpenHelp }) {
         onClick={(e) => onOpenHelp?.(e.currentTarget)}
         className="mt-3 min-h-11 min-w-11 rounded border border-slate-400 px-4 py-2 text-base"
       >
-        Help
+        Help{' '}
+        <span className="sr-only">for {m.title}</span>
       </button>
     </article>
   )

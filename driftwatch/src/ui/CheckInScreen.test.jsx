@@ -10,7 +10,7 @@ afterEach(() => {
   vi.restoreAllMocks()
 })
 
-const BANNER = 'Simulated data. Decision support only, not a medical device.'
+const BANNER = 'Simulated data. Decision support, not a medical device.'
 const formOf = (name) => screen.getByRole('form', { name })
 
 describe('CheckInScreen', () => {

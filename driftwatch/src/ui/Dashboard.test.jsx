@@ -34,7 +34,7 @@ const data = {
     'environment/body_temperature': { label: 'Body temperature', unit: '°C', howToMeasure: 'Thermometer.', whyItMatters: 'Fever.', action: 'Rest.', source: 'design value' },
   },
 }
-const BANNER = 'Simulated data. Decision support only, not a medical device.'
+const BANNER = 'Simulated data. Decision support, not a medical device.'
 
 afterEach(cleanup)
 
@@ -90,7 +90,7 @@ describe('Dashboard', () => {
     render(<Dashboard data={data} />)
     await userEvent.click(screen.getByRole('button', { name: /Head and lungs/ }))
     const card = screen.getByRole('article', { name: /Body temperature/ })
-    const help = within(card).getByRole('button', { name: 'Help' })
+    const help = within(card).getByRole('button', { name: /^Help for / })
     await userEvent.click(help)
     const dialog = screen.getByRole('dialog')
     expect(within(dialog).getByText('Thermometer.')).toBeTruthy()

@@ -25,8 +25,8 @@ Stack: React, Vite, JavaScript only, Tailwind CSS, Vitest, fast-check. Component
 | --- | --- | --- |
 | Where the pure code lives | `driftwatch/src/report/` (development plan folder). It imports only `engine/urgency.js` and `data/domains.js`. | The development plan lists `report/`. `structure.md` only lists `engine/`, so `report/` is an addition that mirrors the `engine/` purity rules. |
 | Builder signature | `buildGroundReport({ alerts, readings, rules, now, config })`. Requirement 1.1 lists four fields. `config` is a fifth, required field. | The caps and window length must be data (`reportConfig.json`) and `report/` must import no JSON. The caller passes the loaded config in, the same pattern as `loadCutoffs()` in core. A missing or invalid `config` throws `TypeError` because it is a programming error, not bad data. |
-| Caps as data | `driftwatch/src/data/reportConfig.json` holds `windowDays` (7), `maxActiveAlertsPerModule` (6), `maxLastReadings` (24) and the six Module_Labels, with `"source": "design value"`. `data/reportConfig.js` exports `loadReportConfig()` (static import, validate, freeze, cache), like `loadCutoffs()`. | Requirement 8 says the design may adjust the caps once the layout is fixed. A data file lets the print check change them without code edits, and the repo rule is that limits carry a `source`. |
-| Cap values | Keep the requirement placeholders 6 and 24 for now. They are explicitly **placeholders until the print-preview check (see Manual checks)**. | See the page-fit analysis below: the worst case cannot fit one page at 9 pt, so any final value must come from looking at a real print preview of the 14-day scenario. |
+| Caps as data | `driftwatch/src/data/reportConfig.json` holds `windowDays` (7), `maxActiveAlertsPerModule` (6), `maxLastReadings` (12) and the six Module_Labels, with `"source": "design value"`. `data/reportConfig.js` exports `loadReportConfig()` (static import, validate, freeze, cache), like `loadCutoffs()`. | Requirement 8 says the design may adjust the caps once the layout is fixed. A data file lets the print check change them without code edits, and the repo rule is that limits carry a `source`. |
+| Cap values | Set from the print-preview check: 6 Active_Alerts per module and 12 Last_Reading rows. With these values the 14-day demo (day 14) prints on one A4 page and one Letter page in Chrome and Edge. In print, Active alerts are set in two columns, the Why, Recommended action and Source parts of an entry run on as one paragraph, icons are 9pt high, line height is 1.1, and a `<domain>_overall` entry whose `why` and `action` repeat another alert of the same module word for word is not listed again (its status and urgency stay in the Module status table, and the model is unchanged). | See the page-fit analysis below: the worst case cannot fit one page at 9 pt, so any final value must come from looking at a real print preview of the 14-day scenario. |
 | How the screen gets data | `GroundReport` takes `data` (a `DashboardData`), `now` and optional `config`, `onPrint`, `refreshing` props. It never imports Dexie or `store/`. `App.jsx` owns the single `useDashboardData()` instance. | Requirement 10.6. Same pattern as `Dashboard` and `CheckInScreen`. |
 | Clock | `App.jsx` reads `Date.now()` once, when the user opens the report, and passes it as `now`. `GroundReport` and `buildGroundReport` never read the clock. | Requirement 6.4. The report does not change while it is open or being printed. |
 | Fresh alerts | On opening the report, `App.jsx` calls `refresh(now)` from `useDashboardData` (added by the check-in spec) so Alerts match the same `now` as the window. The report shows "Loading data" and disables Print until `refresh` settles. If `refresh` is not present or rejects, the report is shown with the data already in memory. | Alerts have no timestamp (assumption 1), so they should be computed for the same `now` as the Report_Window. |
@@ -101,7 +101,7 @@ driftwatch/src/
 {
   "windowDays": 7,
   "maxActiveAlertsPerModule": 6,
-  "maxLastReadings": 24,
+  "maxLastReadings": 12,
   "moduleLabels": {
     "radiation": "Radiation",
     "isolation": "Isolation",
@@ -202,7 +202,7 @@ Markup (headings in a logical order, Requirement 10.4):
     <h1 id="report-title">Ground report</h1>  "Simulated" tag
     <p>Generated <time> {formatDateTime(now)} </time></p>
     <p>Window: {formatDateTime(windowStart)} to {formatDateTime(windowEnd)}</p>
-    <p class="simulated-line">All data in this report is simulated. Decision support only, not a medical device.</p>
+    <p class="simulated-line">All data in this report is simulated. Decision support, not a medical device.</p>
   </header>
   <section aria-labelledby="h-modules"><h2 id="h-modules">Module status</h2>   table: Module | Status | Urgency
   <section aria-labelledby="h-esc">   <h2>Open escalations</h2>   list or "No open escalations."
@@ -430,7 +430,7 @@ For any Alerts, Readings, rules, config and `now`, `JSON.parse(JSON.stringify(mo
 
 - Rendering: a `DashboardData` fixture shows the title "Ground report", "Driftwatch", the Generated_Timestamp and window times, the six Module_Labels with Status_Label text and urgency, "No data" for a module without Alerts, active alert entries with "Recommended action", the `why` text and `source`, the escalation section placed before the per-module section in DOM order, and the last readings with unit (Requirements 2.5, 3.3, 3.6, 4.2, 4.4, 5.3, 6.3, 6.5).
 - Fixed texts: "No active alerts in the last 7 days.", "No open escalations.", "No readings in the last 7 days.", `and 1 more`, `and 2 more readings`, the capped note only when capped (Requirements 3.5, 4.3, 5.6, 8.2 to 8.4).
-- Simulated line: the exact text "All data in this report is simulated. Decision support only, not a medical device." is in the sheet (not inside a `no-print` element) in the ready state and in the empty-data state (Requirements 6.1, 6.2, 7.1).
+- Simulated line: the exact text "All data in this report is simulated. Decision support, not a medical device." is in the sheet (not inside a `no-print` element) in the ready state and in the empty-data state (Requirements 6.1, 6.2, 7.1).
 - Status icons: each of Normal, Watch, Act and No data row has the `StatusBadge` text and an SVG with its own shape (Requirement 9.7).
 - Print button: label "Print or Save as PDF"; click calls the injected `onPrint` once; with no prop, click calls a stubbed `window.print`; it is a `button`, is reachable by `userEvent.tab()`, and Enter and Space activate it; it has `min-h-11` and `min-w-11`; it is disabled and "Loading data" shows when `data.status` is `'loading'` or `refreshing` is true (Requirements 7.5, 9.1 to 9.3).
 - Title: `document.title` contains "Driftwatch ground report" while mounted and is restored after unmount (Requirement 9.8).

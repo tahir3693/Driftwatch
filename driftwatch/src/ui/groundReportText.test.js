@@ -7,7 +7,7 @@ import * as T from './groundReportText.js'
 describe('groundReportText', () => {
   it('has the exact fixed strings', () => {
     expect(T.GROUND_REPORT_TITLE).toBe('Ground report')
-    expect(T.GROUND_REPORT_SIMULATED_LINE).toBe('All data in this report is simulated. Decision support only, not a medical device.')
+    expect(T.GROUND_REPORT_SIMULATED_LINE).toBe('All data in this report is simulated. Decision support, not a medical device.')
     expect(T.NO_ACTIVE_ALERTS).toBe('No active alerts in the last 7 days.')
     expect(T.NO_ESCALATIONS).toBe('No open escalations.')
     expect(T.NO_READINGS).toBe('No readings in the last 7 days.')

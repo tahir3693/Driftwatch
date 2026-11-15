@@ -15,7 +15,7 @@ Stack: React, Vite, JavaScript only, Tailwind CSS, Dexie, Vitest. fast-check and
 | `store/db.js` has `db.version(1).stores({ readings: '++id, [domain+indicator+timestamp], timestamp' })`. | Add `db.version(2)` with a new `checkins` table. Dexie carries unchanged tables forward, so `readings` and its data are untouched. A test opens a v1 database holding a Reading and then opens v2. |
 | `saveReading` validates and strips to four fields, `getReadings` returns rows without `id`. Readings carry no module tag. | The Check_In_Record stores the ids of the Readings it wrote (`readingIds`). Replace-on-resubmit deletes exactly those ids. Readings from the simulated scenario on the same day are never touched, and the `readings` schema stays as it is. |
 | `runModules(descriptors, readingsByDomain, ctx)` passes `readingsByDomain[domain]` to a `rules` module as `{ [indicator]: Reading[] }`, and to a `function` module as its only `readings` argument. | For `environment`, `gravity` and `nutrition` the caller builds `{ indicator: Reading[] }`. For `radiation` the caller passes the engine input object `{ cumulativeDose_mSv, premissionDose_mSv, protonFlux_pfu, symptoms }` built by the radiation input builder, because `modules/radiation/index.js` runs `evaluate(inputs)` directly. |
-| Only `modules/radiation/index.js` exists. `environment`, `gravity`, `nutrition` have `rules.json` but no `index.js`. There is no `isolation` folder, no `store/dashboardData.js` and no `sim/` code yet. | The shared module list is built in one place (`data/moduleList.js`, see Components) with `defineModule({ kind: 'rules' })` for the three rules modules. Isolation is added when it exists. The check-in works without it. |
+| Only `modules/radiation/index.js` exists. `environment`, `gravity`, `nutrition` have `rules.json` but no `index.js`. There is no `isolation` folder, no `store/dashboardData.js` and no `sim/` code yet. | The shared module list is built in one place (`data/moduleList.js`, see Components) with `defineModule({ kind: 'rules' })` for the three rules modules. Isolation is added when it exists. The check-in works without it. (Update: all five modules, including Isolation, now have descriptors; `getModuleDescriptors()` returns five.) |
 | `engine/` files are pure, take `now` and data as parameters and have a `*.test.js` beside them. | All check-in logic is in new `engine/` files that take ranges, config and `now` as parameters. They import no JSON, Dexie or React. |
 
 ### Design decisions
@@ -109,7 +109,7 @@ driftwatch/src/
   "co2":         { "label": "Cabin CO2",          "unit": "mmHg",     "min": 0,   "max": 10,   "integer": false, "source": "design value" },
   "temperature": { "label": "Body temperature",   "unit": "deg C",    "min": 34,  "max": 42,   "integer": false, "source": "design value" },
   "sleep":       { "label": "Sleep",              "unit": "h",        "min": 0,   "max": 16,   "integer": false, "source": "design value" },
-  "mood":        { "label": "Mood",               "unit": "",         "min": 1,   "max": 5,    "integer": true,  "source": "design value" },
+  "mood":        { "label": "Mood and stress",    "unit": "",         "min": 0,   "max": 10,   "integer": true,  "source": "design value" },
   "exercise":    { "label": "Exercise sessions",  "unit": "sessions", "min": 0,   "max": 21,   "integer": true,  "source": "design value" },
   "intake":      { "label": "Food intake",        "unit": "%",        "min": 0,   "max": 150,  "integer": false, "source": "design value" },
   "reaction":    { "label": "Reaction time",      "unit": "ms",       "min": 100, "max": 2000, "integer": false, "source": "design value" }
@@ -136,7 +136,7 @@ validateCheckIn(module, raw, ranges)
 // raw (strings from inputs, booleans or null for yes/no):
 //   environment: { co2, temperature, headache, nauseaFatigue }
 //   radiation:   { symptoms: { nausea, vomiting, fatigue, skin, fever, bruising } }   // booleans
-//   isolation:   { sleep, mood, reaction }     // reaction: '' or null when no Reaction_Check result
+//   isolation:   { sleep, mood, social, reaction }     // reaction: '' or null when no Reaction_Check result
 //   gravity:     { exercise }
 //   nutrition:   { intake }
 // -> { ok: true, values } | { ok: false, errors: [{ field, message }] }
@@ -149,7 +149,7 @@ Per numeric field, in this order:
 1. Empty after trim: `Enter a value for <label>.` (Requirement 7.3).
 2. Not matching the number pattern: `<label> must be a number.` (7.4).
 3. `integer` is true and the value is not an integer: `<label> must be a whole number.` (7.6).
-4. Outside `[min, max]` (both inclusive): `<label> must be from <min> to <max> <unit>.` For a unit-less field the trailing space and unit are omitted, for example `Mood must be from 1 to 5.` (7.5).
+4. Outside `[min, max]` (both inclusive): `<label> must be from <min> to <max> <unit>.` For a unit-less field the trailing space and unit are omitted, for example `Mood and stress must be from 0 to 10.` (7.5).
 
 For a yes or no field whose value is not `true` or `false`: `Choose yes or no.` (7.8). The Radiation form has no error case: unticked boxes are `false`. The `reaction` field is optional: an empty value is valid and gives `values.reaction = null`. A non-empty value is checked by rules 2 to 4.
 
@@ -183,7 +183,7 @@ mapCheckIn(module, values, { now, priorHeadache })
 | --- | --- |
 | environment | `environment/cabin_co2_mmHg`, `environment/body_temperature`, `environment/headache_logged` (1 or 0), `environment/symptom_check` (from `deriveSymptomCode`) |
 | radiation | `radiation/symptom_<key>` for each of `nausea`, `vomiting`, `fatigue`, `skin`, `fever`, `bruising`, value 1 or 0 (six Readings always) |
-| isolation | `isolation/sleep_hours`, `isolation/mood`, `environment/sleep_hours` (same value), and `isolation/reaction_ms` only when `values.reaction` is not null |
+| isolation | `isolation/sleep_hours`, `isolation/mood`, `isolation/social_contact`, `environment/sleep_hours` (same value), and `isolation/reaction_ms` only when `values.reaction` is not null |
 | gravity | `gravity/exercise_sessions_per_week` |
 | nutrition | `nutrition/intake_pct_of_plan` |
 
@@ -334,7 +334,7 @@ The Dashboard receives the new `DashboardData` as a prop, so it re-renders witho
 | `CheckInScreen` | Disclaimer banner (reuses the dashboard `SimulatedBanner` and its exact text), a switch button `min-h-11 min-w-11` with the label "Dashboard", `StreakDisplay`, and the five forms in the fixed order in a grid `grid-cols-1 lg:grid-cols-2`. A single `<div aria-live="polite">` repeats the latest confirmation or error text. |
 | Module forms | Each is a `<form>` with its own submit button (`min-h-11`). Inputs go through `FormField`. Result text sits next to the form: "Saved. Alerts updated.", "Saved. Alerts could not be updated yet.", or "Could not save your check-in. Please try again." |
 | `FormField` | A `<label htmlFor>` and an input. On error: the message in a `<p id>` below it, `aria-invalid="true"`, `aria-describedby` pointing at that id. Errors carry text and an icon, never colour alone. |
-| Yes or no, mood, symptoms | Each set is a `<fieldset>` with a `<legend>`. Yes or no uses two radio buttons. Mood uses five radios labelled 1 to 5 with "Very low" at 1 and "Very good" at 5. Radiation uses six checkboxes. |
+| Yes or no, mood, symptoms | Each set is a `<fieldset>` with a `<legend>`. Yes or no uses two radio buttons. Mood and stress uses eleven radios labelled 0 to 10 with "Calm and happy" at 0 and "Very stressed" at 10, the scale of the Isolation module. Radiation uses six checkboxes. |
 | Focus on error | After a result with `errors`, the form calls `focus()` on the element for `errors[0].field` (looked up by `id`). |
 | `EnvironmentForm` | When `headache === true` shows the hint "A single day is saved to your history. Possible symptoms raise an alert when they repeat." |
 | `IsolationForm` | Sleep input, mood radios, and `ReactionCheck`. The check reports `null` (skipped or too few taps) or a rounded median, stored in `raw.reaction`. |
@@ -409,7 +409,7 @@ For any module, any valid values, any `now` and any prior headache history, ever
 
 ### Property 6: Each module writes its documented indicators and values
 
-For any valid values: environment writes exactly `cabin_co2_mmHg`, `body_temperature`, `headache_logged` and `symptom_check` with the entered numbers and 1 or 0 for headache. Radiation writes exactly six `symptom_<key>` Readings, each 1 if and only if its box was ticked. Isolation writes `sleep_hours`, `mood`, an environment `sleep_hours` with the same value as the isolation one, and `reaction_ms` if and only if a reaction value was given. Gravity writes `exercise_sessions_per_week` and nutrition writes `intake_pct_of_plan`, each equal to the entered value.
+For any valid values: environment writes exactly `cabin_co2_mmHg`, `body_temperature`, `headache_logged` and `symptom_check` with the entered numbers and 1 or 0 for headache. Radiation writes exactly six `symptom_<key>` Readings, each 1 if and only if its box was ticked. Isolation writes `sleep_hours`, `mood`, `social_contact`, an environment `sleep_hours` with the same value as the isolation one, and `reaction_ms` if and only if a reaction value was given. Gravity writes `exercise_sessions_per_week` and nutrition writes `intake_pct_of_plan`, each equal to the entered value.
 
 **Validates: Requirements 2.2, 2.3, 3.2, 4.2, 4.3, 4.4, 4.5, 6.2, 6.4**
 

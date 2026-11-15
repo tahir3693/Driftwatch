@@ -7,11 +7,11 @@ import AppNav from './AppNav.jsx'
 afterEach(cleanup)
 
 describe('AppNav', () => {
-  it('has three buttons in order inside a Main navigation with the no-print class', () => {
+  it('has four buttons in order inside a Main navigation with the no-print class', () => {
     render(<AppNav view="dashboard" onChange={() => {}} />)
     const nav = screen.getByRole('navigation', { name: 'Main' })
     expect(nav.className).toMatch(/\bno-print\b/)
-    expect(screen.getAllByRole('button').map((b) => b.textContent)).toEqual(['Dashboard', 'Check-in', 'Ground report'])
+    expect(screen.getAllByRole('button').map((b) => b.textContent)).toEqual(['Dashboard', 'Check-in', 'Ground report', 'Sources'])
   })
 
   it.each([
@@ -43,7 +43,7 @@ describe('AppNav', () => {
 
   it('is reached by Tab, one button after another', async () => {
     render(<AppNav view="dashboard" onChange={() => {}} />)
-    for (const name of ['Dashboard', 'Check-in', 'Ground report']) {
+    for (const name of ['Dashboard', 'Check-in', 'Ground report', 'Sources']) {
       await userEvent.tab()
       expect(document.activeElement).toBe(screen.getByRole('button', { name }))
     }

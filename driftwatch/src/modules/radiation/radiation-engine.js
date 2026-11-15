@@ -21,7 +21,7 @@ export const RULES = {
   // PROTOTYPE status bands on the 0-100 urgency score
   bands: { watch: 30, act: 60 },
   escalateAtFraction: 0.8,
-  quietFlux_pfu: 1 // PROTOTYPE placeholder used as "baseline" for the flux indicator
+  quietFlux_pfu: 1 // PROTOTYPE design value: quiet-sun reference flux, shown as the alert baseline for the flux indicator
 };
 
 const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, x));
@@ -51,17 +51,17 @@ const ACTIONS = {
   },
   symptom_check_in: {
     normal: "No action needed.",
-    watch: "Repeat the check-in in a few hours and tell the crew medical officer if symptoms continue.",
+    watch: "Repeat the check-in in a few hours and tell the flight surgeon if symptoms continue.",
     act: "Contact the flight surgeon now and log all symptoms."
   },
   solar_proton_flux: {
     normal: "No action needed.",
     watch: "Check the space weather forecast and be ready to follow your mission's shelter procedure.",
-    act: "Follow your mission's solar particle event and shelter procedure."
+    act: "Follow your mission's solar particle event and shelter procedure, and tell the flight surgeon."
   },
   radiation_overall: {
     normal: "No action needed. Keep your routine check-ins.",
-    watch: "Repeat the check-in in a few hours, review the radiation environment, and tell the crew medical officer if symptoms continue.",
+    watch: "Repeat the check-in in a few hours, review the radiation environment, and tell the flight surgeon if symptoms continue.",
     act: "Follow your mission's solar particle event and shelter procedure, and contact the flight surgeon on the ground now."
   }
 };

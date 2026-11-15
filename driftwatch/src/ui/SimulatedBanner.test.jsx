@@ -8,7 +8,7 @@ afterEach(cleanup)
 describe('SimulatedBanner', () => {
   it('shows the exact disclaimer and has no button', () => {
     render(<SimulatedBanner />)
-    expect(screen.getByText('Simulated data. Decision support only, not a medical device.')).toBeTruthy()
+    expect(screen.getByText('Simulated data. Decision support, not a medical device.')).toBeTruthy()
     expect(screen.queryAllByRole('button')).toHaveLength(0)
   })
 })

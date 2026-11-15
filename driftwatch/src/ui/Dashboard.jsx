@@ -13,10 +13,11 @@ const keyOf = (alert) => `${alert.domain}/${alert.indicator}`
 const isOverall = (alert) => alert.indicator === `${alert.domain}_overall`
 
 /**
- * The dashboard. Props: { data: DashboardData, mapping, onLoadScenario, onShowCheckIn }.
+ * The dashboard. Props: { data: DashboardData, mapping, onLoadScenario, onShowCheckIn, scenarioControls }.
+ * `scenarioControls` is an element (the scenario player) shown under the banner.
  * Presentational: it never reads storage or calls the engine.
  */
-export default function Dashboard({ data, mapping = defaultMapping, onLoadScenario, onShowCheckIn }) {
+export default function Dashboard({ data, mapping = defaultMapping, onLoadScenario, onShowCheckIn, scenarioControls = null }) {
   const [selectedRegion, setSelectedRegion] = useState(null)
   const [helpTarget, setHelpTarget] = useState(null)
   const [loadError, setLoadError] = useState(false)
@@ -63,6 +64,7 @@ export default function Dashboard({ data, mapping = defaultMapping, onLoadScenar
   return (
     <div className="overflow-x-hidden text-base">
       <SimulatedBanner />
+      {scenarioControls}
       {typeof onShowCheckIn === 'function' ? (
         <button
           type="button"

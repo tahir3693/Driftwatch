@@ -19,7 +19,7 @@ Property tests use fast-check, are optional (marked `*`), run at least 100 times
 
 - [x] 2. Data files and day keys
   - [x] 2.1 Create the form ranges, the config and the loader with unit tests
-    - Create `src/data/checkinRanges.json` with the seven fields from the design (`co2`, `temperature`, `sleep`, `mood`, `exercise`, `intake`, `reaction`), each with `label`, `unit`, `min`, `max`, `integer` and `"source": "design value"`; values: CO2 0 to 10 mmHg, temperature 34 to 42 deg C, sleep 0 to 16 h, mood 1 to 5 (whole), exercise 0 to 21 (whole), intake 0 to 150 %, reaction 100 to 2000 ms
+    - Create `src/data/checkinRanges.json` with the eight fields from the design (`co2`, `temperature`, `sleep`, `mood`, `social`, `exercise`, `intake`, `reaction`), each with `label`, `unit`, `min`, `max`, `integer` and `"source": "design value"`; values: CO2 0 to 10 mmHg, temperature 34 to 42 deg C, sleep 0 to 16 h, mood and stress 0 to 10 (whole), social contact 0 to 1440 min (whole), exercise 0 to 21 (whole), intake 0 to 150 %, reaction 100 to 2000 ms
     - Create `src/data/checkinConfig.json` with `{ "minModulesPerDay": 1, "reactionMinTaps": 5, "source": "design value" }`
     - Create `src/data/checkinData.js` exporting `loadCheckinRanges()` and `loadCheckinConfig()`: static import, shape check that throws on a missing field, `min >= max` or a missing `source`, then cache and `Object.freeze` (same pattern as `data/cutoffs.js`)
     - Write `checkinData.test.js`: every required number, unit and `"design value"` source is present (7.1), a malformed object throws, the result is frozen, and each range differs from the matching band limits in the four `rules.json` files (7.9)
@@ -77,7 +77,7 @@ Property tests use fast-check, are optional (marked `*`), run at least 100 times
 
   - [x] 3.8 Implement `mapCheckIn.js` with unit tests
     - Create `src/engine/mapCheckIn.js` exporting `mapCheckIn(module, values, { now, priorHeadache })` returning Readings `{ timestamp: now, domain, indicator, value }`, and exporting the indicator name constants
-    - Mapping per the design table: environment (`cabin_co2_mmHg`, `body_temperature`, `headache_logged`, `symptom_check` via `deriveSymptomCode`), radiation (six `symptom_<key>` Readings, always), isolation (`sleep_hours`, `mood`, an `environment` `sleep_hours` with the same value, and `reaction_ms` only when not null), gravity (`exercise_sessions_per_week`), nutrition (`intake_pct_of_plan`); yes is 1 and no is 0
+    - Mapping per the design table: environment (`cabin_co2_mmHg`, `body_temperature`, `headache_logged`, `symptom_check` via `deriveSymptomCode`), radiation (six `symptom_<key>` Readings, always), isolation (`sleep_hours`, `mood`, `social_contact`, an `environment` `sleep_hours` with the same value, and `reaction_ms` only when not null), gravity (`exercise_sessions_per_week`), nutrition (`intake_pct_of_plan`); yes is 1 and no is 0
     - Write `mapCheckIn.test.js`: each module's exact indicator set, 1 or 0 values, reaction omitted when null, every Reading accepted by `validateReading`, and every indicator that exists in a `rules.json` matches it exactly (check-in-only names `headache_logged`, `symptom_<key>`, `reaction_ms`, `mood` are listed in the test)
     - _Requirements: 2.2, 2.3, 2.4, 3.2, 4.2, 4.3, 4.4, 4.5, 6.2, 6.4, 8.1, 8.2, 8.3, 8.4, 13.1, 13.2_
 
@@ -163,8 +163,8 @@ Property tests use fast-check, are optional (marked `*`), run at least 100 times
 
   - [x] 5.5 Create the module descriptors and the shared module list
     - Create `src/modules/environment/index.js`, `src/modules/gravity/index.js` and `src/modules/nutrition/index.js`, each default-exporting `defineModule({ name, domain, kind: 'rules', rules })` with the module's existing `rules.json`; no scoring logic and no `rules.json` change
-    - Create `src/data/moduleList.js` exporting `getModuleDescriptors()` returning the radiation descriptor (from `modules/radiation/index.js`) followed by the three rules modules; Isolation is not included (the module does not exist yet), so Isolation Readings are stored and produce no Alert
-    - Write `src/data/moduleList.test.js`: four descriptors, domains `radiation`, `environment`, `gravity`, `nutrition`, and `runModules` over them with empty input returns each `<domain>_overall` or a reported per-module error without throwing
+    - Create `src/data/moduleList.js` exporting `getModuleDescriptors()` returning the radiation descriptor (from `modules/radiation/index.js`) followed by the isolation, gravity, environment and nutrition descriptors (five in total)
+    - Write `src/data/moduleList.test.js`: five descriptors, domains `radiation`, `isolation`, `gravity`, `environment`, `nutrition`, and `runModules` over them with empty input returns each `<domain>_overall` or a reported per-module error without throwing
     - _Requirements: 4.6, 9.2_
 
   - [x] 5.6 Create or extend `store/dashboardData.js` with `refresh(now)`
@@ -203,7 +203,7 @@ Property tests use fast-check, are optional (marked `*`), run at least 100 times
   - [x] 7.1 Create fixed text, `FormField` and the banner with component tests
     - Create `src/ui/checkinText.js` exporting the fixed strings: form titles in order, field labels, "Saved. Alerts updated.", "Saved. Alerts could not be updated yet.", "Could not save your check-in. Please try again.", "Thank you for checking in.", the headache hint, the radiation symptom labels (Requirement 3.1) and the reaction messages; use the word "possible" for symptoms and risks, and no diagnostic wording
     - Create `src/ui/FormField.jsx`: a `<label htmlFor>` and an input; on error the message is in a `<p id>` below, with `aria-invalid="true"` and `aria-describedby` pointing at it, shown with an icon and text
-    - Create `src/ui/SimulatedBanner.jsx` only if the dashboard spec has not already created it: full-width bar with the exact text "Simulated data. Decision support only, not a medical device." and no button
+    - Create `src/ui/SimulatedBanner.jsx` only if the dashboard spec has not already created it: full-width bar with the exact text "Simulated data. Decision support, not a medical device." and no button
     - Write `FormField.test.jsx` (label association, error wiring) and `SimulatedBanner.test.jsx` if created here
     - _Requirements: 1.3, 1.6, 11.1, 11.3, 11.7, 12.6_
 
@@ -221,7 +221,7 @@ Property tests use fast-check, are optional (marked `*`), run at least 100 times
     - _Requirements: 1.2, 2.1, 2.9, 3.1, 3.3, 11.1, 11.2, 11.3, 11.4, 11.5, 12.3_
 
   - [x] 7.4 Implement `IsolationForm`, `GravityForm` and `NutritionForm` with component tests
-    - Create `src/ui/IsolationForm.jsx`: sleep in hours, mood as five radios in a `fieldset` (1 "Very low" to 5 "Very good"), and `ReactionCheck` whose result is stored in `raw.reaction` (`null` when skipped or too few taps)
+    - Create `src/ui/IsolationForm.jsx`: sleep in hours, mood and stress as eleven radios in a `fieldset` (0 "Calm and happy" to 10 "Very stressed"), social contact in minutes, and `ReactionCheck` whose result is stored in `raw.reaction` (`null` when skipped or too few taps)
     - Create `src/ui/GravityForm.jsx` (exercise sessions in the last 7 days, whole number) and `src/ui/NutritionForm.jsx` (share of planned menu eaten today, percent), with the same props, button and focus behaviour as task 7.3
     - Write `IsolationForm.test.jsx`, `GravityForm.test.jsx` and `NutritionForm.test.jsx` (jsdom): labels, mood fieldset and legend, a submit without a reaction result is allowed, error wiring and focus
     - _Requirements: 1.2, 4.1, 4.5, 6.1, 6.3, 11.1, 11.2, 11.3, 11.4, 11.5, 12.3_
@@ -262,8 +262,8 @@ Property tests use fast-check, are optional (marked `*`), run at least 100 times
 - Tasks marked with `*` are optional and can be skipped for faster MVP
 - Each task references specific requirements for traceability; requirements 1 to 13 are each referenced by at least one task
 - Dependency on the dashboard spec: `store/dashboardData.js`, `useDashboardData`, the module `index.js` files for environment, gravity and nutrition, and `ui/SimulatedBanner.jsx` do not exist yet. This plan does not wait for the dashboard tasks. Tasks 5.5, 5.6, 7.1 and 7.7 create the minimum needed (module descriptors and `data/moduleList.js`, the data hook with `refresh(now)`, the banner, the view switch). If the dashboard spec lands first, those tasks only extend the existing files (add `refresh` and the radiation input step in 5.6, and the view switch in 7.7), and the banner in 7.1 is skipped. Both specs must edit `dashboardData.js` and `App.jsx` one at a time, not in parallel
-- Isolation has no module code, so Isolation Readings are stored and no Isolation Alert appears until that module exists
-- Requirement 10.11 note: the requirement says a day "before the first day of the current run" leaves the Streak unchanged. A day directly adjacent to the run would extend it, so Property 12 (task 3.18) states the unchanged case for a gap of at least 1 missing day. Suggested rewording of 10.11: "adding a Day_Key that lies at least 2 days before the first day of the current run SHALL leave the Streak unchanged"
+- Isolation Readings are scored by the Isolation module (`modules/isolation/`) and produce Isolation Alerts
+- Requirement 10.11 note: the requirement says a day "before the first day of the current run" leaves the Streak unchanged. A day directly adjacent to the run would extend it, so Property 12 (task 3.18) states the unchanged case for a gap of at least 1 missing day. Requirement 10.11 now reads "adding a Day_Key that lies at least 2 days before the first day of the current run SHALL leave the Streak unchanged"
 - Layout at 360 px and 1280 px, 16 px text, contrast of the check-in colours (they reuse the dashboard `statusStyle.js` constants) and wording quality are checked by hand in the browser with the network disabled (Requirements 1.6, 12.1, 12.2, 12.3, 12.7, 11.7)
 - Property tests validate universal correctness of the pure functions and the store; component tests cover rendering, focus and accessibility; the integration test covers the engine re-run
 

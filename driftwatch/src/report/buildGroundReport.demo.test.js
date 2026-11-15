@@ -64,9 +64,11 @@ describe('buildGroundReport on the 14-day demo, day 14', () => {
     for (const e of model.escalations) expect(e.action).toEqual(expect.any(String))
   })
 
-  it('has one Last_Reading row per indicator, with units from the rules and raw names for Radiation', () => {
+  it('lists the newest Last_Reading rows up to the cap, with units from the rules and raw names for Radiation', () => {
     const rows = model.lastReadings.map((r) => [r.domain, r.indicator, r.indicatorLabel, r.unit, r.value])
-    expect(rows).toEqual([
+    // All 21 day-14 readings share one timestamp, so they sort by module order, then indicator.
+    // The shipped cap (maxLastReadings 12) keeps the first 12 of this list.
+    const all = ([
       ['radiation', 'cumulative_dose_mSv', 'cumulative_dose_mSv', '', 196],
       ['radiation', 'premission_dose_mSv', 'premission_dose_mSv', '', 120],
       ['radiation', 'proton_flux_pfu', 'proton_flux_pfu', '', 12],
@@ -89,10 +91,12 @@ describe('buildGroundReport on the 14-day demo, day 14', () => {
       ['environment', 'symptom_check', 'Symptom check', 'code', 0],
       ['nutrition', 'intake_pct_of_plan', 'Food intake against plan', '% of plan', 84],
     ])
+    expect(all).toHaveLength(21)
+    expect(rows).toEqual(all.slice(0, 12))
   })
 
-  it('has no capping on the demo and counts that add up', () => {
-    expect(model.counts).toEqual({ activeTotal: 13, activeListed: 13, readingsTotal: 21, readingsListed: 21, moreReadings: 0, capped: false })
+  it('caps the readings to fit one page, keeps every active alert, and counts add up', () => {
+    expect(model.counts).toEqual({ activeTotal: 13, activeListed: 13, readingsTotal: 21, readingsListed: 12, moreReadings: 9, capped: true })
   })
 
   it('copies why, action and source unchanged from the alerts', () => {

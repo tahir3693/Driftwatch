@@ -15,7 +15,7 @@ describe('loadReportConfig', () => {
     const c = loadReportConfig()
     expect(c.windowDays).toBe(7)
     expect(c.maxActiveAlertsPerModule).toBe(6)
-    expect(c.maxLastReadings).toBe(24)
+    expect(c.maxLastReadings).toBe(12) // set from the print preview check: the 14-day demo fits one A4 and one Letter page
     expect(c.moduleLabels).toEqual({
       radiation: 'Radiation',
       isolation: 'Isolation',

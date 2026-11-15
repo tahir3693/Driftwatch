@@ -8,7 +8,7 @@ The check-in builds on the core spec (`.kiro/specs/core/`) and the dashboard spe
 
 Assumptions (to be confirmed in the design):
 
-1. **Isolation without module code.** The Isolation module code is not in the repository yet. The Isolation form writes Readings in the `isolation` Domain for `sleep_hours`, `mood` and `reaction_ms`, and writes `social_contact` only if that indicator is added later. The form works without any Isolation module code. Until that module exists, these Readings are stored and no Isolation Alert appears.
+1. **Isolation module.** The Isolation module (`modules/isolation/`) scores `sleep_hours`, `mood`, `reaction_ms` and `social_contact`. The Isolation form writes Readings in the `isolation` Domain for all four (`reaction_ms` only when a Reaction_Check result exists), and the Isolation module turns them into Isolation Alerts.
 2. **Sleep is shared with Environment.** The existing Environment `rules.json` defines `sleep_hours` for its infection-like Pattern. When the Isolation form is submitted, the Check_In_Mapper also writes the same sleep value as an `environment` Reading for `sleep_hours`, so that Pattern can use it.
 3. **Symptom check code.** The Environment form asks simple questions and derives the `symptom_check` code (0, 1 or 2) defined in the Environment `rules.json`. Code 1 means headache or vision change on 2 or more days. Code 2 means it persists or nausea with fatigue. The derivation (Requirement 2) uses a `headache_logged` Reading (0 or 1) that is stored for history only and is not an indicator in the Rules_File. The 3-day persistence rule is a design value.
 4. **Radiation inputs.** The Radiation engine takes `cumulativeDose_mSv`, `premissionDose_mSv`, `protonFlux_pfu` and a `symptoms` list. The check-in asks only the symptom questions and writes each as a `radiation` Reading named `symptom_<key>` with value 0 or 1. Dose and flux Readings (`cumulative_dose_mSv`, `premission_dose_mSv`, `proton_flux_pfu`) come from the shared simulated scenario in `sim/`. A radiation input builder, placed outside `engine/radiation-engine.js`, assembles the engine inputs from the latest Readings. IF a dose or flux Reading is missing, the builder uses 0 for that input.
@@ -16,7 +16,7 @@ Assumptions (to be confirmed in the design):
 6. **Streak rule.** A day counts toward the streak when at least one module form was submitted that day. The minimum is a design value of 1, held in a data file, so that a lost sensor or a short shift does not break the streak. The streak stays alive through the current day: the count ends at today when today has a check-in, and ends at yesterday when today has none yet.
 7. **Second submit.** A second submit of the same module on the same day replaces the first submit of that module on that day, so the personal baseline never counts one day twice.
 8. **Ranges are design values.** Each form field has a plausible-entry range held in `driftwatch/src/data/checkinRanges.json` with the source `"design value"`. These ranges only reject impossible entries. They are not clinical limits and differ from the bands in each `rules.json`.
-9. **Not covered by the check-in.** The check-in does not write `cabin_co2_7day_avg_mmHg`, `low_intake_bone_note`, `resting_heart_rate_bpm`, `standing_bp_drop`, `orthostatic_symptoms`, `vitamin_d_ng_ml` or `social_contact`.
+9. **Not covered by the check-in.** The check-in does not write `cabin_co2_7day_avg_mmHg`, `low_intake_bone_note`, `resting_heart_rate_bpm`, `standing_bp_drop`, or `orthostatic_symptoms`.
 10. **Navigation.** The app has a simple view switch between the Dashboard and the Check_In_Screen, with no router. Re-running the engine uses the same data hook that feeds the Dashboard, extended with a refresh call.
 11. **Phone width and laptop width.** "Phone width" means 360 CSS pixels and "laptop width" means 1280 CSS pixels, as in the dashboard spec.
 
@@ -42,7 +42,7 @@ Assumptions (to be confirmed in the design):
 - **Streak**: The number of consecutive days, counted back from the current day, that each have at least one Check_In_Record.
 - **Streak_Counter**: The pure function in `engine/` that computes the Streak from a list of Day_Keys and the current Day_Key.
 - **Streak_Display**: The part of the Check_In_Screen that shows the Streak and the modules completed today.
-- **Disclaimer_Banner**: The permanent banner "Simulated data. Decision support only, not a medical device." defined by the dashboard spec.
+- **Disclaimer_Banner**: The permanent banner "Simulated data. Decision support, not a medical device." defined by the dashboard spec.
 - **Phone_Width**: A viewport 360 CSS pixels wide.
 - **Laptop_Width**: A viewport 1280 CSS pixels wide.
 
@@ -56,7 +56,7 @@ Assumptions (to be confirmed in the design):
 
 1. THE Check_In_Screen SHALL show five Module_Forms, titled "Environment", "Radiation", "Isolation", "Gravity" and "Nutrition", in that order.
 2. THE Check_In_Screen SHALL provide a separate submit button for each Module_Form, so that each Module_Form can be submitted on its own.
-3. THE Check_In_Screen SHALL show the Disclaimer_Banner with the exact text "Simulated data. Decision support only, not a medical device."
+3. THE Check_In_Screen SHALL show the Disclaimer_Banner with the exact text "Simulated data. Decision support, not a medical device."
 4. THE Check_In_Screen SHALL provide a control, with a touch target of at least 44 by 44 CSS pixels, that switches between the Dashboard and the Check_In_Screen.
 5. WHEN a Module_Form is submitted successfully, THE Check_In_Screen SHALL show the confirmation text "Saved. Alerts updated." next to that Module_Form and keep the entered values visible.
 6. THE Check_In_Screen SHALL write its labels, hints and messages in English and use the word "possible" wherever a message refers to a symptom or a risk.
@@ -96,7 +96,7 @@ Assumptions (to be confirmed in the design):
 
 #### Acceptance Criteria
 
-1. THE Isolation_Form SHALL ask for sleep in hours, for mood as a whole number from 1 to 5 where 1 is "Very low" and 5 is "Very good", and offer the Reaction_Check.
+1. THE Isolation_Form SHALL ask for sleep in hours, for mood and stress as a whole number from 0 to 10 where 0 is "Calm and happy" and 10 is "Very stressed" (the scale the Isolation module defines in its `rules.json`), for social contact in minutes, and offer the Reaction_Check.
 2. WHEN the Isolation_Form is submitted with valid values, THE Check_In_Mapper SHALL write the `isolation` Readings `sleep_hours` and `mood`.
 3. WHEN the Isolation_Form is submitted with valid values, THE Check_In_Mapper SHALL write the same sleep value as the `environment` Reading `sleep_hours`.
 4. WHEN a Reaction_Check result exists in the Isolation_Form, THE Check_In_Mapper SHALL write the Median_Reaction as the `isolation` Reading `reaction_ms`.
@@ -135,7 +135,7 @@ Assumptions (to be confirmed in the design):
 
 #### Acceptance Criteria
 
-1. THE Form_Ranges SHALL define a minimum and a maximum for each numeric field, each with the source `"design value"`: CO2 from 0 to 10 mmHg, temperature from 34 to 42 deg C, sleep from 0 to 16 hours, mood from 1 to 5, exercise sessions from 0 to 21, intake from 0 to 150 percent, and Median_Reaction from 100 to 2000 ms.
+1. THE Form_Ranges SHALL define a minimum and a maximum for each numeric field, each with the source `"design value"`: CO2 from 0 to 10 mmHg, temperature from 34 to 42 deg C, sleep from 0 to 16 hours, mood and stress from 0 to 10, social contact from 0 to 1440 minutes, exercise sessions from 0 to 21, intake from 0 to 150 percent, and Median_Reaction from 100 to 2000 ms.
 2. THE Check_In_Validator SHALL read the ranges from the Form_Ranges and contain no range constant in its function body.
 3. IF a required numeric field is empty, THEN THE Check_In_Validator SHALL return a Field_Error with the text "Enter a value for <field name>."
 4. IF a numeric field holds text that is not a finite number, THEN THE Check_In_Validator SHALL return a Field_Error with the text "<field name> must be a number."
@@ -188,7 +188,7 @@ Assumptions (to be confirmed in the design):
 8. WHEN the current day has no counted check-in and the Streak is 0, THE Streak_Display SHALL show the text "Check-in streak: 0 days. Submit any form to start a streak."
 9. WHERE the astronaut reopens the app after a restart, THE Streak_Display SHALL show the Streak computed from the stored Check_In_Records.
 10. FOR ALL sets of Day_Keys, THE Streak_Counter SHALL return the same Streak for any ordering of the Day_Keys and for any number of duplicates of a Day_Key (order-independence and idempotence properties).
-11. FOR ALL sets of Day_Keys, adding a Day_Key that lies before the first day of the current run SHALL leave the Streak unchanged, and adding the current Day_Key when it is missing SHALL increase the Streak by exactly 1 (metamorphic properties).
+11. FOR ALL sets of Day_Keys, adding a Day_Key that lies at least 2 days before the first day of the current run SHALL leave the Streak unchanged, and adding the current Day_Key when it is missing SHALL increase the Streak by exactly 1 (metamorphic properties).
 12. FOR ALL Alerts and Reading values, THE Streak SHALL be identical, because the Streak depends on no Alert status and no Reading value (invariant property).
 
 ### Requirement 11: Accessible forms

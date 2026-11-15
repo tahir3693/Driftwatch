@@ -1,0 +1,61 @@
+{
+  "note": "Every other limit in Driftwatch is a design value. All demo data is simulated.",
+  "groups": [
+    {
+      "id": "nasa",
+      "heading": "NASA documents",
+      "publisher": "NASA",
+      "items": [
+        {
+          "id": "NASA-STD-3001 Vol 1 Rev B",
+          "title": "NASA Space Flight Human-System Standard, Volume 1: Crew Health, Revision B",
+          "kind": "Document",
+          "usedFor": "Radiation: the career effective dose requirement (requirement V1 4030) and the design requirement for a reference solar particle event (requirement V1 4031). The reference event is shown as context and is not used in scoring."
+        },
+        {
+          "id": "NASA OCHMO-TB-020 Rev E",
+          "title": "NASA Office of the Chief Health and Medical Officer technical brief on radiation protection, Revision E",
+          "kind": "Document",
+          "usedFor": "Radiation: the career effective dose requirement as summarised from NASA-STD-3001."
+        },
+        {
+          "id": "NASA OCHMO-TB-004",
+          "title": "NASA Office of the Chief Health and Medical Officer technical brief on carbon dioxide",
+          "kind": "Document",
+          "usedFor": "Environment: the 3 mmHg limit for the 1-hour average cabin CO2 and the 2.5 mmHg 7-day average."
+        },
+        {
+          "id": "NASA OCHMO-TB-030",
+          "title": "NASA Office of the Chief Health and Medical Officer technical brief on bone loss",
+          "kind": "Document",
+          "usedFor": "Gravity: 6 to 7 exercise sessions a week. BMD and strength tracker: the 95% of baseline hip and spine BMD limit. Nutrition: the 35 to 90 ng/mL vitamin D range."
+        },
+        {
+          "id": "NASA NTRS: Behavioral Challenges of a Mars Mission",
+          "title": "NASA Technical Reports Server paper, Behavioral Challenges of a Mars Mission",
+          "kind": "Document",
+          "usedFor": "Isolation: context for sleep on the ISS, stress ratings, the reaction check and scheduled contact with ground and family. The Isolation limits themselves are design values."
+        }
+      ]
+    },
+    {
+      "id": "noaa",
+      "heading": "NOAA space weather",
+      "publisher": "NOAA",
+      "items": [
+        {
+          "id": "NOAA SWPC Space Weather Scales (S-scale)",
+          "title": "NOAA Space Weather Prediction Center, Space Weather Scales: Solar Radiation Storms, S1 to S5",
+          "kind": "Document",
+          "usedFor": "Radiation: the solar proton flux steps (S1 at 10 pfu up to S5 at 100000 pfu). How the steps map to points is a Driftwatch prototype, not a NOAA value."
+        },
+        {
+          "id": "NOAA SWPC GOES proton flux",
+          "title": "NOAA GOES satellite integral proton flux at 10 MeV and above",
+          "kind": "Dataset",
+          "usedFor": "Radiation: the flux indicator uses the same quantity and unit (pfu). The scenario flux values are simulated, not downloaded."
+        }
+      ]
+    }
+  ]
+}

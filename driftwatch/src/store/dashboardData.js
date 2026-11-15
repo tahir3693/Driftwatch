@@ -72,6 +72,21 @@ export async function buildDashboardData(now) {
   const unmapped = [...new Set(alerts.filter((a) => !mapped.has(a.domain)).map((a) => a.domain))]
   if (unmapped.length) console.warn(`Driftwatch: alerts for unmapped domains: ${unmapped.join(', ')}`)
 
+  return {
+    status: 'ready',
+    alerts,
+    readings,
+    baselineStats: baselineStatsFor(readings, rules),
+    rules,
+    hasReadings: Object.values(readings).some((l) => l.length > 0),
+  }
+}
+
+/**
+ * Baseline band statistics per `domain/indicator` key: computeBaseline over every Reading except
+ * the latest, kept only when ready. Pure; shared by stored data and the scenario player.
+ */
+export function baselineStatsFor(readings, rules) {
   const baselineStats = {}
   for (const [key, list] of Object.entries(readings)) {
     if (list.length < 2) continue
@@ -79,15 +94,7 @@ export async function buildDashboardData(now) {
     const b = computeBaseline(list.slice(0, -1), days)
     if (b.ready) baselineStats[key] = { mean: b.mean, sd: b.sd }
   }
-
-  return {
-    status: 'ready',
-    alerts,
-    readings,
-    baselineStats,
-    rules,
-    hasReadings: Object.values(readings).some((l) => l.length > 0),
-  }
+  return baselineStats
 }
 
 /**

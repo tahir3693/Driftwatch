@@ -31,7 +31,7 @@ Assumptions (to be fixed in the design):
 - **Baseline_Band**: The shaded range on a Trend_Chart that shows the personal baseline of the astronaut for that indicator.
 - **Help_Panel**: The `HelpPanel` component that explains one indicator.
 - **Indicator_Rule**: The entry for one indicator in a module's `rules.json`, with `label`, `howToMeasure`, `whyItMatters`, `action` and `source`.
-- **Disclaimer_Banner**: The permanent banner that reads "Simulated data. Decision support only, not a medical device."
+- **Disclaimer_Banner**: The permanent banner that reads "Simulated data. Decision support, not a medical device."
 - **Selected_Region**: The Body_Region the astronaut most recently activated on the Body_Map.
 - **Reference_Dose_Text**: The wording "NASA design requirement for a reference solar particle event", used whenever the Dashboard mentions the 250 mSv value.
 - **Phone_Width**: A viewport 360 CSS pixels wide.
@@ -45,7 +45,7 @@ Assumptions (to be fixed in the design):
 
 #### Acceptance Criteria
 
-1. THE Dashboard SHALL display the Disclaimer_Banner with the exact text "Simulated data. Decision support only, not a medical device."
+1. THE Dashboard SHALL display the Disclaimer_Banner with the exact text "Simulated data. Decision support, not a medical device."
 2. THE Dashboard SHALL keep the Disclaimer_Banner visible at Phone_Width and at Laptop_Width without any user action to reveal it.
 3. THE Dashboard SHALL NOT provide a control that hides or dismisses the Disclaimer_Banner.
 4. THE Dashboard SHALL label each Alert_Card, Trend_Chart and Body_Map that shows demo data with the word "Simulated".

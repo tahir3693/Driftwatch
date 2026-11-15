@@ -1,4 +1,4 @@
-﻿import { defineConfig } from 'vitest/config'
+import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
@@ -14,7 +14,7 @@ export default defineConfig({
       manifest: {
         name: 'Driftwatch',
         short_name: 'Driftwatch',
-        description: 'Catch the drift before it becomes a problem. Simulated data. Decision support only, not a medical device.',
+        description: 'Catch the drift before it becomes a problem. Simulated data. Decision support, not a medical device.',
         lang: 'en',
         start_url: '/',
         scope: '/',

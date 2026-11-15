@@ -37,7 +37,7 @@
     border-color: black !important;
     box-shadow: none !important;
     font-size: 9pt !important;
-    line-height: 1.2 !important;
+    line-height: 1.1 !important;
   }
 
   .report-sheet {
@@ -52,6 +52,11 @@
   .report-sheet svg * {
     fill: black !important;
     stroke: black !important;
+  }
+  /* Icons the height of the 9pt text, so they do not set the line height. */
+  .report-sheet svg {
+    width: 9pt !important;
+    height: 9pt !important;
   }
 
   .report-sheet .inline-flex {
@@ -107,7 +112,21 @@
     padding: 0 !important;
     border: none !important;
   }
+  /* Why, Recommended action and Source run on as one paragraph to save lines. */
+  .report-sheet .alert-entry p {
+    display: inline !important;
+    margin-right: 4pt !important;
+  }
 
+  /* Active alerts in two columns so the 14-day demo fits one page. A module heading stays
+     with its first entry; an entry never splits across a column or page. */
+  .report-sheet .alerts-columns {
+    column-count: 2;
+    column-gap: 8mm;
+  }
+  .report-sheet .alerts-module h3 {
+    break-after: avoid;
+  }
   .report-sheet .readings-table-wrap {
     column-count: 2;
     column-gap: 8mm;
