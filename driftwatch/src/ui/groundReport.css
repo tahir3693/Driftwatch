@@ -45,6 +45,22 @@
     margin: 0 !important;
     padding: 0 !important;
     border: none !important;
+    border-radius: 0 !important;
+  }
+  /* Report sections: thin black borders, no rounded screen frames. */
+  .report-sheet section {
+    border: 0.5pt solid black !important;
+    border-radius: 0 !important;
+    padding: 2pt 4pt !important;
+    margin: 3pt 0 0 !important;
+  }
+  .report-sheet header {
+    border-bottom: 1pt solid black !important;
+    padding-bottom: 2pt !important;
+  }
+  .report-sheet .space-weather p {
+    display: inline !important;
+    margin-right: 4pt !important;
   }
 
   /* Status icons print as solid black shapes; the status word is always next to them. */

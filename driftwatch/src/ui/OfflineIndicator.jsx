@@ -1,12 +1,10 @@
 ﻿import { offlineStatus } from './offlineStatus.js'
 import { useOfflineReady } from './useOfflineReady.js'
-
 const DOT = {
-  ready: 'bg-emerald-400',
-  preparing: 'bg-amber-400',
-  unsupported: 'bg-slate-400',
+  ready: 'bg-normal',
+  preparing: 'bg-watch',
+  unsupported: 'bg-ink-2',
 }
-
 export default function OfflineIndicator() {
   const state = useOfflineReady()
   const s = offlineStatus(state)
@@ -16,7 +14,7 @@ export default function OfflineIndicator() {
       aria-live="polite"
       data-testid="offline-indicator"
       title={s.detail}
-      className="inline-flex items-center gap-2 rounded border border-slate-500 px-3 py-2 text-base text-slate-100"
+      className="inline-flex items-center gap-2 rounded-lg border border-line bg-panel px-3 py-2 text-base text-ink"
     >
       <span aria-hidden="true" className={`inline-block h-3 w-3 rounded-full ${DOT[s.key]}`} />
       <span className="font-semibold">{s.label}</span>

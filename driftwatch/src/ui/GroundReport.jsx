@@ -3,6 +3,7 @@ import './groundReport.css'
 import SimulatedBanner from './SimulatedBanner.jsx'
 import StatusBadge from './StatusBadge.jsx'
 import SpaceWeatherLine from './SpaceWeatherLine.jsx'
+import BackButton from './BackButton.jsx'
 import { loadReportConfig } from '../data/reportConfig.js'
 import { buildGroundReport } from '../report/buildGroundReport.js'
 import { flattenReadings } from '../report/flattenReadings.js'
@@ -46,22 +47,17 @@ const printWindow = () => {
 
 function PrintButton({ onPrint, disabled }) {
   return (
-    <button
-      type="button"
-      onClick={onPrint}
-      disabled={disabled}
-      className="min-h-11 min-w-11 rounded bg-teal-400 px-4 py-2 text-base font-semibold text-slate-900 disabled:opacity-50"
-    >
+    <button type="button" onClick={onPrint} disabled={disabled} className="dw-btn dw-btn-primary min-h-11 min-w-11">
       {PRINT_LABEL}
     </button>
   )
 }
 
 /**
- * The Ground report screen. Props: { data: DashboardData, now, config, onPrint, refreshing, spaceWeather }.
+ * The Ground report screen. Props: { data: DashboardData, now, config, onPrint, refreshing, spaceWeather, onBack }.
  * `now` comes from the app, so the report never reads the clock. It reads no storage and makes no request.
  */
-export default function GroundReport({ data, now, config = loadReportConfig(), onPrint = printWindow, refreshing = false, spaceWeather = null }) {
+export default function GroundReport({ data, now, config = loadReportConfig(), onPrint = printWindow, refreshing = false, spaceWeather = null, onBack }) {
   const hasNow = typeof now === 'number' && Number.isFinite(now)
   const loading = !data || data.status === 'loading' || refreshing || !hasNow
 
@@ -81,6 +77,7 @@ export default function GroundReport({ data, now, config = loadReportConfig(), o
 
   const toolbar = (
     <div className="no-print mt-3 flex flex-wrap items-center gap-3">
+      {onBack ? <BackButton onClick={onBack} /> : null}
       <PrintButton onPrint={onPrint} disabled={loading} />
     </div>
   )
@@ -92,7 +89,7 @@ export default function GroundReport({ data, now, config = loadReportConfig(), o
           <SimulatedBanner />
         </div>
         {toolbar}
-        <p role="status" className="mt-3 text-base">
+        <p role="status" className="mt-3 flex items-center gap-3 text-base"><span className="dw-spinner" aria-hidden="true" />
           {LOADING_DATA}
         </p>
       </section>
@@ -108,14 +105,14 @@ export default function GroundReport({ data, now, config = loadReportConfig(), o
       </div>
       {toolbar}
 
-      <article aria-labelledby="report-title" className="report-sheet mt-3 rounded border border-slate-400 p-4">
-        <header>
-          <p className="font-semibold">Driftwatch</p>
+      <article aria-labelledby="report-title" className="report-sheet dw-card mt-3 p-4 sm:p-6">
+        <header className="border-b border-line pb-3">
+          <p className="font-semibold text-ink-2">Driftwatch</p>
           <div className="flex flex-wrap items-center gap-3">
-            <h1 id="report-title" className="text-2xl font-bold">
+            <h1 id="report-title" className="text-3xl font-bold">
               {GROUND_REPORT_TITLE}
             </h1>
-            <span className="rounded border border-slate-400 px-2 font-semibold">Simulated</span>
+            <span className="rounded-lg border-2 border-watch px-2 font-semibold text-watch">Simulated</span>
           </div>
           <p>
             Generated <time>{formatDateTime(model.now)}</time>
@@ -123,10 +120,10 @@ export default function GroundReport({ data, now, config = loadReportConfig(), o
           <p>
             Window: <time>{formatDateTime(model.windowStart)}</time> to <time>{formatDateTime(model.windowEnd)}</time>
           </p>
-          <p className="simulated-line font-semibold">{GROUND_REPORT_SIMULATED_LINE}</p>
+          <p className="simulated-line mt-1 font-semibold">{GROUND_REPORT_SIMULATED_LINE}</p>
         </header>
 
-        <section aria-labelledby="report-h-modules" className="mt-4">
+        <section aria-labelledby="report-h-modules" className="mt-4 rounded-lg border border-line bg-bg p-3">
           <h2 id="report-h-modules" className="text-xl font-semibold">
             {HEADING_MODULES}
           </h2>
@@ -154,7 +151,7 @@ export default function GroundReport({ data, now, config = loadReportConfig(), o
           </table>
         </section>
 
-        <section aria-labelledby="report-h-escalations" className="mt-4">
+        <section aria-labelledby="report-h-escalations" className="mt-4 rounded-lg border border-line bg-bg p-3">
           <h2 id="report-h-escalations" className="text-xl font-semibold">
             {HEADING_ESCALATIONS}
           </h2>
@@ -171,7 +168,7 @@ export default function GroundReport({ data, now, config = loadReportConfig(), o
           )}
         </section>
 
-        <section aria-labelledby="report-h-alerts" className="mt-4">
+        <section aria-labelledby="report-h-alerts" className="mt-4 rounded-lg border border-line bg-bg p-3">
           <h2 id="report-h-alerts" className="text-xl font-semibold">
             {HEADING_ALERTS}
           </h2>
@@ -211,14 +208,14 @@ export default function GroundReport({ data, now, config = loadReportConfig(), o
         </section>
 
         {spaceWeather && !withAlerts.some((m) => m.domain === 'radiation') ? (
-          <section aria-labelledby="report-h-space-weather" className="mt-4">
+          <section aria-labelledby="report-h-space-weather" className="mt-4 rounded-lg border border-line bg-bg p-3">
             <h2 id="report-h-space-weather" className="text-xl font-semibold">
               Radiation
             </h2>
             <SpaceWeatherLine spaceWeather={spaceWeather} className="space-weather mt-1" />
           </section>
         ) : null}
-        <section aria-labelledby="report-h-readings" className="mt-4">
+        <section aria-labelledby="report-h-readings" className="mt-4 rounded-lg border border-line bg-bg p-3">
           <h2 id="report-h-readings" className="text-xl font-semibold">
             {HEADING_READINGS}
           </h2>

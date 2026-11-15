@@ -1,5 +1,6 @@
 import FormField from './FormField.jsx'
 import FormShell, { errorFor } from './FormShell.jsx'
+import { rangeHelper } from './fieldHints.js'
 
 export default function NutritionForm({ value, onChange, onSubmit, errors, resultText, submitting }) {
   return (
@@ -8,6 +9,7 @@ export default function NutritionForm({ value, onChange, onSubmit, errors, resul
         id="nutrition-intake"
         label="Share of the planned menu eaten today"
         unit="%"
+        helper={rangeHelper('intake')}
         value={value.intake}
         onChange={(v) => onChange({ ...value, intake: v })}
         error={errorFor(errors, 'intake')}

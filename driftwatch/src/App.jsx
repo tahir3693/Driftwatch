@@ -61,19 +61,21 @@ export default function App() {
   )
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-slate-900 p-4 text-base text-slate-100">
+    <main className="min-h-screen overflow-x-hidden bg-bg px-4 py-4 text-base text-ink sm:px-6">
+      <div className="mx-auto w-full max-w-6xl">
       <header className="no-print flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-4xl font-bold">Driftwatch</h1>
+        <h1 className="text-3xl font-bold sm:text-4xl">Driftwatch</h1>
         <OfflineIndicator />
       </header>
-      <p className="no-print mt-1 mb-4 text-lg text-slate-300">Catch the drift before it becomes a problem.</p>
-      <AppNav view={view === 'bmd' ? 'dashboard' : view} onChange={changeView} />
+      <p className="no-print mb-4 mt-1 text-lg text-ink-2">Catch the drift before it becomes a problem.</p>
+      <AppNav view={view} onChange={changeView} />
+      <div key={view} className="dw-fade-in">
       {view === 'checkin' ? (
         <CheckInScreen onSubmit={submit} streak={streak} onShowDashboard={() => changeView('dashboard')} />
       ) : view === 'report' ? (
-        <GroundReport data={data} now={scenario.data ? scenario.now : reportNow} refreshing={scenario.data ? false : preparing} spaceWeather={spaceWeather} />
+        <GroundReport data={data} now={scenario.data ? scenario.now : reportNow} refreshing={scenario.data ? false : preparing} spaceWeather={spaceWeather} onBack={() => changeView('dashboard')} />
       ) : view === 'sources' ? (
-        <SourcesPanel />
+        <SourcesPanel onBack={() => changeView('dashboard')} />
       ) : view === 'bmd' ? (
         <BmdTrackerScreen onBack={() => changeView('dashboard')} />
       ) : (
@@ -85,6 +87,8 @@ export default function App() {
           scenarioControls={controls}
         />
       )}
+      </div>
+      </div>
     </main>
   )
 }

@@ -1,17 +1,324 @@
 @import "tailwindcss";
 
-/* Visible keyboard focus: 3 px outline in the light text colour. */
-:focus-visible {
-  outline: 3px solid #f1f5f9;
-  outline-offset: 2px;
+/* ==========================================================================
+   Theme "Mission control" (dark). The one place where the colours are defined.
+   Everything in the app uses these variables, or the Tailwind tokens below that point at them.
+   System fonts only: the app must work offline.
+   ========================================================================== */
+:root {
+  --bg: #0b1220;
+  --panel: #121c2f;
+  --raised: #1a2740;
+  --border: #2a3a57;
+  --text: #e8eef8;
+  --text-2: #a9b7cf;
+  --accent: #2dd4bf;
+  --normal: #34d399;
+  --watch: #fbbf24;
+  --act: #f87171;
+  /* Control edges (inputs, buttons, tabs) need 3:1 against the page, so they use a lighter edge than cards. */
+  --border-strong: #6b7f9f;
+  --radius-sm: 8px;
+  --radius: 10px;
+  --radius-lg: 12px;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.35), 0 6px 18px rgb(0 0 0 / 0.22);
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  color-scheme: dark;
 }
 
+/* Tailwind tokens: bg-bg, bg-panel, bg-raised, border-line, border-line-strong, text-ink, text-ink-2,
+   text-accent, text-normal / text-watch / text-act, and so on.
+   The default slate, teal, red, amber and green shades the older components still use are mapped to the
+   theme as well, so nothing keeps an off-theme colour. */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-raised: var(--raised);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-ink: var(--text);
+  --color-ink-2: var(--text-2);
+  --color-accent: var(--accent);
+  --color-normal: var(--normal);
+  --color-watch: var(--watch);
+  --color-act: var(--act);
+
+  --color-slate-100: var(--text);
+  --color-slate-300: var(--text-2);
+  --color-slate-400: var(--border-strong);
+  --color-slate-500: var(--border-strong);
+  --color-slate-800: var(--raised);
+  --color-slate-900: var(--bg);
+  --color-teal-300: var(--accent);
+  --color-teal-400: var(--accent);
+  --color-red-300: var(--act);
+  --color-red-400: var(--act);
+  --color-amber-300: var(--watch);
+  --color-amber-400: var(--watch);
+  --color-emerald-400: var(--normal);
+  --color-green-400: var(--normal);
+
+  --radius-sm: 8px;
+  --radius: 10px;
+  --radius-lg: 12px;
+}
+
+html {
+  background: var(--bg);
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.6;
+}
+h1,
+h2,
+h3,
+h4 {
+  line-height: 1.25;
+}
+p {
+  max-width: 72ch;
+}
+
+/* Visible keyboard focus: a 2 px accent ring on everything that takes focus. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 g[role="button"]:focus-visible {
-  outline: 3px solid #f1f5f9;
+  outline: 2px solid var(--accent);
   outline-offset: 4px;
 }
 
-body {
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  font-size: 16px;
+/* ---- Components ------------------------------------------------------- */
+.dw-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+.dw-card-raised {
+  background: var(--raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+/* Buttons: primary (accent), secondary (outline). Both at least 44 px high. */
+.dw-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.25;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.dw-btn:hover:not(:disabled) {
+  background: var(--raised);
+  border-color: var(--text-2);
+}
+.dw-btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+.dw-btn-primary:hover:not(:disabled) {
+  background: var(--accent);
+  border-color: var(--text);
+  filter: brightness(1.1);
+}
+.dw-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dw-input {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--raised);
+  color: var(--text);
+  font-size: 1rem;
+}
+.dw-input[aria-invalid="true"] {
+  border-color: var(--act);
+  border-width: 2px;
+}
+
+/* Top tab row: scrolls inside itself on a narrow phone. */
+.dw-tabs {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.25rem;
+  margin: 0 -0.25rem 1rem;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+.dw-tab {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.dw-tab[aria-current="page"] {
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
+}
+.dw-tab[aria-current="page"]:hover {
+  background: var(--text);
+}
+
+/* Banner with the amber border: simulated data on every screen. */
+.dw-banner {
+  border: 2px solid var(--watch);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+/* Collapsible sections (details/summary). */
+.dw-details {
+  border-top: 1px solid var(--border);
+}
+.dw-details > summary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+}
+.dw-details > summary::-webkit-details-marker {
+  display: none;
+}
+.dw-details > summary::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border-right: 2px solid var(--text-2);
+  border-bottom: 2px solid var(--text-2);
+  transform: rotate(-45deg);
+  transition: transform 0.15s ease;
+}
+.dw-details[open] > summary::before {
+  transform: rotate(45deg);
+}
+
+/* Status colour on an edge or a bar. The status word and icon always go with it. */
+.dw-status-normal {
+  border-color: var(--normal);
+}
+.dw-status-watch {
+  border-color: var(--watch);
+}
+.dw-status-act {
+  border-color: var(--act);
+}
+.dw-status-nodata {
+  border-color: var(--border-strong);
+}
+
+/* Body map: the region cards in the svg. */
+.bm-region {
+  cursor: pointer;
+  outline: none;
+}
+.bm-card {
+  fill: var(--panel);
+  stroke: var(--border-strong);
+  stroke-width: 2;
+  transition: fill 0.15s ease, stroke 0.15s ease;
+}
+.bm-region:hover .bm-card {
+  fill: var(--raised);
+  stroke: var(--text-2);
+}
+.bm-region[aria-pressed="true"] .bm-card {
+  fill: var(--raised);
+  stroke: var(--accent);
+  stroke-width: 4;
+}
+.bm-region:focus-visible .bm-card {
+  stroke: var(--accent);
+  stroke-width: 4;
+}
+.bm-region:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.bm-shape {
+  stroke: var(--text);
+  stroke-width: 2;
+}
+.bm-region[aria-pressed="true"] .bm-shape {
+  stroke-width: 5;
+}
+.bm-region:hover .bm-shape {
+  stroke-width: 4;
+}
+
+/* Progress bar for the scenario days. */
+.dw-progress {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--raised);
+  border: 1px solid var(--border-strong);
+  overflow: hidden;
+}
+.dw-progress > span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.25s ease;
+}
+
+/* Spinner for actions that take time. */
+.dw-spinner {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+  border-top-color: var(--accent);
+  animation: dw-spin 0.8s linear infinite;
+}
+@keyframes dw-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.dw-fade-in {
+  animation: dw-fade 0.25s ease both;
+}
+@keyframes dw-fade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

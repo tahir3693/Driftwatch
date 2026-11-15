@@ -111,14 +111,16 @@ describe('App', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'Driftwatch' })).toBeTruthy()
     expect(screen.getByTestId('offline-indicator')).toBeTruthy()
     expect(screen.getAllByText('Simulated data. Decision support, not a medical device.')).toHaveLength(1)
-    await userEvent.click(await screenButton('Dashboard'))
+    await userEvent.click(await screenButton('Back to dashboard'))
     expect(await screen.findByRole('button', { name: /Head and lungs/ })).toBeTruthy()
     expect(screen.getAllByText('Simulated data. Decision support, not a medical device.')).toHaveLength(1)
   })
 
-  it('opens the BMD and strength screen from the dashboard button, in the app, and goes back', async () => {
+  it('opens the BMD and strength screen from its tab, in the app, and goes back', async () => {
     render(<App />)
-    await userEvent.click(await screenButton('BMD and strength'))
+    const tabs = within(await screen.findByRole('navigation', { name: 'Main' }))
+    await userEvent.click(tabs.getByRole('button', { name: 'BMD and strength' }))
+    expect(tabs.getByRole('button', { name: 'BMD and strength' }).getAttribute('aria-current')).toBe('page')
     expect(screen.getByRole('heading', { level: 1, name: 'Driftwatch' })).toBeTruthy()
     expect(screen.getByRole('heading', { level: 2, name: 'BMD and strength' })).toBeTruthy()
     expect(screen.getByRole('navigation', { name: 'Main' })).toBeTruthy()
@@ -174,7 +176,7 @@ describe('App', () => {
     await userEvent.type(screen.getByLabelText('Share of the planned menu eaten today (%)'), '40')
     await userEvent.click(screen.getByRole('button', { name: 'Save Nutrition' }))
     expect(await screen.findByText('Saved. Alerts updated.')).toBeTruthy()
-    await userEvent.click(await screenButton('Dashboard'))
+    await userEvent.click(await screenButton('Back to dashboard'))
     expect(screen.queryByRole('button', { name: 'Load simulated 14-day scenario' })).toBeNull()
   })
 })

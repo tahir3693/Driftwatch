@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import SimulatedBanner from './SimulatedBanner.jsx'
 import StreakDisplay from './StreakDisplay.jsx'
+import BackButton from './BackButton.jsx'
 import EnvironmentForm from './EnvironmentForm.jsx'
 import RadiationForm from './RadiationForm.jsx'
 import IsolationForm from './IsolationForm.jsx'
@@ -56,20 +57,15 @@ export default function CheckInScreen({ onSubmit, streak = { count: 0, todayModu
     <section aria-label="Daily check-in" className="overflow-x-hidden text-base">
       <SimulatedBanner />
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-2xl font-semibold">Daily check-in</h2>
-        <button
-          type="button"
-          onClick={onShowDashboard}
-          className="min-h-11 min-w-11 rounded border border-slate-400 px-4 py-2 text-base font-semibold"
-        >
-          Dashboard
-        </button>
+        <h2 className="text-2xl font-bold">Daily check-in</h2>
+        <BackButton onClick={onShowDashboard} />
       </div>
+      <p className="mt-1 text-ink-2">Answer the modules you can today. Each one saves on its own and updates your alerts.</p>
       <StreakDisplay count={streak.count} todayModules={streak.todayModules} increased={streak.increased} />
-      <div data-testid="checkin-live" aria-live="polite" role="status" className="mt-3 min-h-6 text-base font-semibold">
+      <div data-testid="checkin-live" aria-live="polite" role="status" className="mt-3 min-h-6 text-base font-semibold text-ink-2">
         {announcement}
       </div>
-      <div className="mt-3 grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div className="mt-3 grid grid-cols-1 items-start gap-4 lg:grid-cols-2">
         {FORMS.map(({ module }) => {
           const Form = COMPONENTS[module]
           const result = results[module]

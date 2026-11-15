@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+﻿// @vitest-environment jsdom
 import { describe, it, expect, afterEach, vi } from 'vitest'
 import { render, screen, cleanup } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -40,13 +40,9 @@ describe('BmdTrackerScreen', () => {
 describe('Dashboard BMD and strength button', () => {
   const data = { alerts: [], readings: {}, rules: {}, baselineStats: {}, status: 'ready', hasReadings: true }
 
-  it('is a button that calls onShowBmd', async () => {
-    const onShowBmd = vi.fn()
-    render(<Dashboard data={data} onShowBmd={onShowBmd} />)
-    const button = screen.getByRole('button', { name: 'BMD and strength' })
-    expect(button.className).toMatch(/min-h-11/)
-    await userEvent.click(button)
-    expect(onShowBmd).toHaveBeenCalledTimes(1)
+  it('has no separate BMD button on the dashboard: the tab row has it', () => {
+    render(<Dashboard data={data} onShowBmd={() => {}} />)
+    expect(screen.queryByRole('button', { name: 'BMD and strength' })).toBeNull()
   })
 
   it('opens the screen from the Bones and muscles detail too', async () => {
@@ -55,11 +51,6 @@ describe('Dashboard BMD and strength button', () => {
     await userEvent.click(screen.getByRole('button', { name: /Bones and muscles/ }))
     await userEvent.click(screen.getByRole('button', { name: 'Open BMD and strength tracker' }))
     expect(onShowBmd).toHaveBeenCalledTimes(1)
-  })
-
-  it('shows no button without a handler', () => {
-    render(<Dashboard data={data} />)
-    expect(screen.queryByRole('button', { name: 'BMD and strength' })).toBeNull()
   })
 })
 

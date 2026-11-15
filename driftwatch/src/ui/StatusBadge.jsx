@@ -1,5 +1,4 @@
-import { styleFor } from './statusStyle.js'
-
+﻿import { styleFor } from './statusStyle.js'
 /** Small inline SVG shape: circle, triangle, square or dash. Decorative, so hidden from assistive tech. */
 export function StatusIcon({ status, size = 16 }) {
   const { icon, color } = styleFor(status)
@@ -12,12 +11,13 @@ export function StatusIcon({ status, size = 16 }) {
     </svg>
   )
 }
-
-export default function StatusBadge({ status }) {
+/** Status as word, icon shape and colour together, never colour alone. `large` is for the summary. */
+export default function StatusBadge({ status, large = false }) {
   const s = styleFor(status)
+  const size = large ? 'px-4 py-2 text-xl' : 'px-3 py-1 text-base'
   return (
-    <span className={`inline-flex items-center gap-2 rounded border px-2 py-1 text-base font-semibold ${s.classes}`}>
-      <StatusIcon status={status} />
+    <span className={`inline-flex items-center gap-2 rounded-lg border-2 bg-raised font-bold ${size} ${s.classes}`}>
+      <StatusIcon status={status} size={large ? 22 : 18} />
       <span>{s.label}</span>
     </span>
   )

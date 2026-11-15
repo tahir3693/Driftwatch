@@ -1,5 +1,6 @@
 import FormField from './FormField.jsx'
 import FormShell, { errorFor } from './FormShell.jsx'
+import { rangeHelper } from './fieldHints.js'
 
 export default function GravityForm({ value, onChange, onSubmit, errors, resultText, submitting }) {
   return (
@@ -8,6 +9,7 @@ export default function GravityForm({ value, onChange, onSubmit, errors, resultT
         id="gravity-exercise"
         label="Exercise sessions in the last 7 days"
         hint="Whole number of sessions you completed."
+        helper={rangeHelper('exercise')}
         inputMode="numeric"
         value={value.exercise}
         onChange={(v) => onChange({ ...value, exercise: v })}

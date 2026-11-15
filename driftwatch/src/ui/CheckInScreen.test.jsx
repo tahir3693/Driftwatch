@@ -25,10 +25,10 @@ describe('CheckInScreen', () => {
     expect(screen.getAllByText(BANNER)).toHaveLength(1)
   })
 
-  it('has a Dashboard switch with a 44 px target that calls onShowDashboard', async () => {
+  it('has a Back to dashboard button with a 44 px target that calls onShowDashboard', async () => {
     const onShowDashboard = vi.fn()
     render(<CheckInScreen onSubmit={async () => ({ status: 'saved' })} onShowDashboard={onShowDashboard} />)
-    const button = screen.getByRole('button', { name: 'Dashboard' })
+    const button = screen.getByRole('button', { name: 'Back to dashboard' })
     expect(button.className).toMatch(/min-h-11/)
     expect(button.className).toMatch(/min-w-11/)
     await userEvent.click(button)

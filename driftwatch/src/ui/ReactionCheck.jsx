@@ -104,9 +104,9 @@ export default function ReactionCheck({ onResult }) {
   const mainLabel = running ? REACTION.tap : phase === 'done' || phase === 'skipped' ? REACTION.again : REACTION.start
 
   return (
-    <div className="mt-3 rounded border border-slate-500 p-3">
+    <div className="dw-card-raised mt-4 p-3">
       <p className="text-base font-semibold">Reaction check</p>
-      <p className="text-base text-slate-300">{REACTION.intro}</p>
+      <p className="text-base text-ink-2">{REACTION.intro}</p>
       <div role="status" aria-live="polite" className="mt-2 min-h-11 text-xl font-semibold">
         {phase === 'prompt' ? REACTION.prompt : null}
         {phase === 'waiting' && !message ? <span className="text-base font-normal">{REACTION.waiting}</span> : null}
@@ -114,10 +114,10 @@ export default function ReactionCheck({ onResult }) {
         {phase === 'done' && median !== null ? <span className="text-base">{`Median reaction time: ${median} ms`}</span> : null}
       </div>
       <div className="mt-2 flex flex-wrap gap-3">
-        <button type="button" onClick={onMain} className="min-h-11 min-w-11 rounded bg-teal-400 px-4 py-2 text-base font-semibold text-slate-900">
+        <button type="button" onClick={onMain} className="dw-btn dw-btn-primary min-h-11 min-w-11">
           {mainLabel}
         </button>
-        <button type="button" onClick={skip} className="min-h-11 min-w-11 rounded border border-slate-400 px-4 py-2 text-base font-semibold">
+        <button type="button" onClick={skip} className="dw-btn min-h-11 min-w-11">
           {REACTION.skip}
         </button>
       </div>
