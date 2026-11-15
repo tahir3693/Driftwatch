@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+/* Visible keyboard focus: 3 px outline in the light text colour. */
+:focus-visible {
+  outline: 3px solid #f1f5f9;
+  outline-offset: 2px;
+}
+
+g[role="button"]:focus-visible {
+  outline: 3px solid #f1f5f9;
+  outline-offset: 4px;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 16px;
+}

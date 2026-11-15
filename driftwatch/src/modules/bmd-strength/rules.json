@@ -1,0 +1,110 @@
+{
+  "module": "bmd-strength",
+  "domain": "gravity",
+  "storage_key": "orbit-journal-v1",
+  "week_days": 7,
+  "indicators": {
+    "bmd_ratio": {
+      "kind": "baseline_ratio",
+      "label": "BMD ratio",
+      "unit": "ratio of baseline",
+      "bad_direction": "low",
+      "measures": [
+        { "key": "hip", "indicator": "hip_bmd", "label": "Hip BMD", "unit": "g/cm²" },
+        { "key": "lumbar", "indicator": "lumbar_spine_bmd", "label": "Lumbar spine BMD", "unit": "g/cm²" }
+      ],
+      "bands": {
+        "normal": { "value_min": 0.98 },
+        "watch": { "value_min": 0.95, "value_max": 0.98 },
+        "act": { "value_max": 0.95 }
+      },
+      "why": "{label} is {pct} of your baseline ({date}), below the {lower}% limit. This is a possible bone loss, not a diagnosis.",
+      "action": "Tell the flight surgeon at the next contact and follow their advice. Do not change your exercise or diet plan on your own.",
+      "messages": {
+        "watch": {
+          "why": "{label} is {pct} of your baseline ({date}), within the {lower}% to {upper}% band. This is an early sign of possible bone loss.",
+          "action": "Keep to the planned exercise, re-measure as scheduled and mention it to the flight surgeon."
+        },
+        "normal": {
+          "why": "{label} is {pct} of your baseline ({date}), above the {upper}% limit.",
+          "action": "Keep to the planned exercise. The flight surgeon reviews the trend at routine contacts."
+        },
+        "no_data": {
+          "why": "No {label} baseline is set in the BMD and strength tracker yet, so no comparison is made.",
+          "action": "Set your baseline in the BMD and strength tracker. Ask the flight surgeon if you are unsure which values to use."
+        }
+      },
+      "howToMeasure": "Enter the hip and lumbar spine BMD values in g/cm² from your scan report in the BMD and strength tracker. The first entry marked as baseline is the reference.",
+      "whyItMatters": "Bone mineral density can fall in weightlessness. Comparing each scan with your own baseline shows a possible loss early.",
+      "source": "NASA OCHMO-TB-030 for the 95% of baseline hip and spine limit; the 98% limit is a design value"
+    },
+    "strength_ratio": {
+      "kind": "baseline_ratio",
+      "label": "Strength ratio",
+      "unit": "ratio of baseline",
+      "bad_direction": "low",
+      "measures": [
+        { "key": "deadlift", "indicator": "deadlift_strength", "label": "Deadlift", "unit": "kg" },
+        { "key": "bench", "indicator": "bench_press_strength", "label": "Bench press", "unit": "kg" }
+      ],
+      "bands": {
+        "normal": { "value_min": 0.9 },
+        "watch": { "value_min": 0.8, "value_max": 0.9 },
+        "act": { "value_max": 0.8 }
+      },
+      "why": "{label} is {pct} of your baseline ({date}), below the {lower}% limit. This is a possible loss of muscle strength, not a diagnosis.",
+      "action": "Tell the flight surgeon at the next contact and follow their advice. Do not change your exercise or diet plan on your own.",
+      "messages": {
+        "watch": {
+          "why": "{label} is {pct} of your baseline ({date}), within the {lower}% to {upper}% band. This is an early sign of possible loss of muscle strength.",
+          "action": "Keep to the planned exercise, re-measure as scheduled and mention it to the flight surgeon."
+        },
+        "normal": {
+          "why": "{label} is {pct} of your baseline ({date}), above the {upper}% limit.",
+          "action": "Keep to the planned exercise. The flight surgeon reviews the trend at routine contacts."
+        },
+        "no_data": {
+          "why": "No {label} baseline is set in the BMD and strength tracker yet, so no comparison is made.",
+          "action": "Set your baseline in the BMD and strength tracker. Ask the flight surgeon if you are unsure which values to use."
+        }
+      },
+      "howToMeasure": "Log a consistent lift, such as a tested one-rep max for deadlift and bench press, in the BMD and strength tracker.",
+      "whyItMatters": "Muscle strength can fall in weightlessness. A drop against your own baseline is an early sign to review training.",
+      "source": "design value"
+    },
+    "missed_training_days": {
+      "kind": "missed_days",
+      "label": "Missed training days",
+      "unit": "days",
+      "bad_direction": "high",
+      "measures": [
+        { "key": "strength", "indicator": "strength_training_missed_days", "label": "Strength training", "unit": "days" },
+        { "key": "endurance", "indicator": "endurance_training_missed_days", "label": "Endurance training", "unit": "days" }
+      ],
+      "bands": {
+        "normal": { "value_max": 2 },
+        "watch": { "value_min": 2, "value_max": 4 },
+        "act": { "value_min": 4 }
+      },
+      "why": "{missed} unchecked {type} training day{plural} this week, up to today. Missed training is a possible risk to bone and muscle.",
+      "action": "Talk to the flight surgeon about the training plan. Do not try to make up all missed sessions at once.",
+      "messages": {
+        "watch": {
+          "why": "{missed} unchecked {type} training day{plural} this week, up to today. Missed training is a possible early risk to bone and muscle.",
+          "action": "Plan the next sessions this week and mention it to the flight surgeon if it continues."
+        },
+        "normal": {
+          "why": "{missed} unchecked {type} training day{plural} this week, up to today.",
+          "action": "Keep to the planned training. The flight surgeon reviews it at routine contacts."
+        },
+        "no_data": {
+          "why": "No {type} training has been logged in the BMD and strength tracker yet.",
+          "action": "Log completed training in the BMD and strength tracker. The flight surgeon reviews it at routine contacts."
+        }
+      },
+      "howToMeasure": "Tick each day's strength and endurance training in the weekly table of the BMD and strength tracker. Only days up to today count.",
+      "whyItMatters": "Regular resistance and endurance exercise is the main way to protect bone and muscle on a long mission.",
+      "source": "design value"
+    }
+  }
+}

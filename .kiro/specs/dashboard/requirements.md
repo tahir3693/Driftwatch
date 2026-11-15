@@ -4,7 +4,7 @@
 
 This spec covers the Driftwatch dashboard: the screen an astronaut uses to see, at a glance, which parts of the body need attention and why. It consists of a drawn body map, an alert card, a trend chart per indicator, a help panel per indicator and a permanent disclaimer banner. The dashboard reads Alerts and Readings produced by the core (see `.kiro/specs/core/`) and rules text from each module's `rules.json`. It adds no new engine logic.
 
-Code lives in `baseline/src/ui/` as `BodyMap`, `TrendChart`, `AlertCard`, `HelpPanel` and shared components (such as a status badge and the disclaimer banner). The stack is React with Vite, JavaScript only, Tailwind CSS, Chart.js through react-chartjs-2, and Vitest. The dashboard needs no backend and no network at runtime. All text is English, there are no NASA logos or branding, and there are no photos of people. All demo data is simulated and labelled "Simulated".
+Code lives in `driftwatch/src/ui/` as `BodyMap`, `TrendChart`, `AlertCard`, `HelpPanel` and shared components (such as a status badge and the disclaimer banner). The stack is React with Vite, JavaScript only, Tailwind CSS, Chart.js through react-chartjs-2, and Vitest. The dashboard needs no backend and no network at runtime. All text is English, there are no NASA logos or branding, and there are no photos of people. All demo data is simulated and labelled "Simulated".
 
 Assumptions (to be fixed in the design):
 
@@ -184,9 +184,9 @@ Assumptions (to be fixed in the design):
 
 #### Acceptance Criteria
 
-1. THE Dashboard SHALL implement `BodyMap`, `TrendChart`, `AlertCard` and `HelpPanel` as separate React components in `baseline/src/ui/`.
+1. THE Dashboard SHALL implement `BodyMap`, `TrendChart`, `AlertCard` and `HelpPanel` as separate React components in `driftwatch/src/ui/`.
 2. THE Dashboard SHALL implement the Region_Status computation as a pure function with no React or DOM import.
 3. THE Dashboard test suite SHALL include a Vitest test for the Region_Status function that covers the invariant and order-independence properties of Requirement 3.
 4. THE Dashboard test suite SHALL include Vitest component tests that check, for each of Normal, Watch and Act, that the Body_Map shows the Status_Label text and the accessible name for a Body_Region.
 5. THE Dashboard test suite SHALL include Vitest component tests for the Alert_Card that check the Escalation_Notice appears when `escalate` is true and is absent when `escalate` is false.
-6. WHEN `vitest --run` is executed in `baseline/`, THE Dashboard test suite SHALL complete with zero failing tests.
+6. WHEN `vitest --run` is executed in `driftwatch/`, THE Dashboard test suite SHALL complete with zero failing tests.

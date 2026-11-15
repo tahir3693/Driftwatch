@@ -1,0 +1,14 @@
+{
+  "windowDays": 7,
+  "maxActiveAlertsPerModule": 6,
+  "maxLastReadings": 24,
+  "moduleLabels": {
+    "radiation": "Radiation",
+    "isolation": "Isolation",
+    "gravity": "Gravity",
+    "environment": "Environment",
+    "nutrition": "Nutrition",
+    "system": "Offline and ground report"
+  },
+  "source": "design value"
+}

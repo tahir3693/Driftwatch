@@ -22,7 +22,7 @@ Stack: React, Vite, JavaScript only, Tailwind CSS, Dexie, Vitest. fast-check and
 
 | Decision | Choice | Reason |
 | --- | --- | --- |
-| Where pure code lives | `baseline/src/engine/` with one test file beside each file. No `src/checkin/` folder. | The structure steering says pure functions with no UI code live in `engine/` and each needs a unit test. |
+| Where pure code lives | `driftwatch/src/engine/` with one test file beside each file. No `src/checkin/` folder. | The structure steering says pure functions with no UI code live in `engine/` and each needs a unit test. |
 | Ranges and config | `data/checkinRanges.json` and `data/checkinConfig.json` are loaded by `data/checkinData.js` (static import, like `data/cutoffs.js`) and passed into the pure functions as arguments. | Requirement 7.2: the validator body holds no range constant. `engine/` imports no JSON. |
 | Clock | The UI reads the clock once per submit and passes `now` (epoch ms) down. `engine/` never reads it. The Reaction_Check component uses `performance.now()` in `ui/`, because timing a tap is a UI concern. | Assumption 5. |
 | Day key | `dayKeyOf(timestamp)` uses the local calendar date. Streak arithmetic uses `Date.UTC` on the parsed `YYYY-MM-DD`, so daylight-saving changes cannot skip or repeat a day. | Local day for the user, stable day arithmetic. |
@@ -69,7 +69,7 @@ Layering rules (same as core and dashboard):
 New and changed files:
 
 ```text
-baseline/src/
+driftwatch/src/
   data/
     checkinRanges.json        field ranges, each with "source": "design value"
     checkinConfig.json        { "minModulesPerDay": 1, "reactionMinTaps": 5, "source": "design value" }
@@ -541,7 +541,7 @@ Files: `dayKey.test.js`, `validateCheckIn.test.js`, `symptomCheck.test.js`, `map
 
 **Not covered by automated tests** because they are visual and need a real browser: single column at 360 px and two columns at 1280 px (12.1, 12.2), 16 px body text, contrast of the check-in colours (they reuse `statusStyle.js` constants that the dashboard tests already check), and the quality of the wording (1.6, 12.7). These are checked by hand with the network disabled.
 
-**Commands.** Run `vitest --run` in `baseline/`. No new runtime dependency is needed. Dev dependencies come from the dashboard spec: `@testing-library/react`, `@testing-library/user-event`, `jsdom`.
+**Commands.** Run `vitest --run` in `driftwatch/`. No new runtime dependency is needed. Dev dependencies come from the dashboard spec: `@testing-library/react`, `@testing-library/user-event`, `jsdom`.
 
 ### Requirements traceability
 

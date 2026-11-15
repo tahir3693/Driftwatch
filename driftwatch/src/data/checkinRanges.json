@@ -1,0 +1,10 @@
+{
+  "co2":         { "label": "Cabin CO2",         "unit": "mmHg",     "min": 0,   "max": 10,   "integer": false, "source": "design value" },
+  "temperature": { "label": "Body temperature",  "unit": "deg C",    "min": 34,  "max": 42,   "integer": false, "source": "design value" },
+  "sleep":       { "label": "Sleep",             "unit": "h",        "min": 0,   "max": 16,   "integer": false, "source": "design value" },
+  "mood":        { "label": "Mood and stress",   "unit": "",         "min": 0,   "max": 10,   "integer": true,  "source": "design value" },
+  "social":      { "label": "Social contact",    "unit": "min",      "min": 0,   "max": 1440, "integer": true,  "source": "design value" },
+  "exercise":    { "label": "Exercise sessions", "unit": "sessions", "min": 0,   "max": 21,   "integer": true,  "source": "design value" },
+  "intake":      { "label": "Food intake",       "unit": "%",        "min": 0,   "max": 150,  "integer": false, "source": "design value" },
+  "reaction":    { "label": "Reaction time",     "unit": "ms",       "min": 100, "max": 2000, "integer": false, "source": "design value" }
+}

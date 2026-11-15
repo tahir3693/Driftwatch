@@ -1,0 +1,7 @@
+{
+  "regions": [
+    { "id": "head_and_lungs", "name": "Head and lungs", "domains": ["radiation", "environment"] },
+    { "id": "bones_and_muscles", "name": "Bones and muscles", "domains": ["gravity"] },
+    { "id": "whole_body", "name": "Whole body", "domains": ["isolation", "nutrition", "system"] }
+  ]
+}

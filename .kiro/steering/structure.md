@@ -4,7 +4,8 @@
 - `engine/`: pure functions with no UI code. Every function in `engine/` needs a unit test.
 - `modules/<name>/rules.json`: bands, patterns, actions and sources as data. Band keys are `normal`, `watch`, `act`.
 - `sim/`: the shared scenario.
-- `ui/`: `BodyMap`, `TrendChart`, `AlertCard`, `HelpPanel`.
+- `ui/`: `BodyMap`, `TrendChart`, `AlertCard`, `HelpPanel`, `GroundReport`, `AppNav`.
+- `report/`: pure report code (no UI, no storage, no clock). Every function in `report/` needs a unit test.
 - `store/`, `data/`: state and static data.
 
 ## Alert contract

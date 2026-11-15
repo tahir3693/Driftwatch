@@ -12,7 +12,7 @@ Stack: React, Vite, JavaScript only, Tailwind CSS, Vitest, fast-check. Component
 
 | Finding | Consequence |
 | --- | --- |
-| `baseline/src/App.jsx` is a stub that renders only the title. No `store/dashboardData.js`, `ui/` component, `statusStyle.js` or `SimulatedBanner` exists yet. The dashboard and check-in specs both plan to edit `App.jsx` and `dashboardData.js`. | The report depends on the dashboard contract (`DashboardData`, `statusStyle.js`, `StatusBadge`, `SimulatedBanner`, `wording.js`) and on the App view switch. Tasks for the report must run after dashboard task 7.2 and check-in task 7.7 (see Navigation and Sequencing risk). |
+| `driftwatch/src/App.jsx` is a stub that renders only the title. No `store/dashboardData.js`, `ui/` component, `statusStyle.js` or `SimulatedBanner` exists yet. The dashboard and check-in specs both plan to edit `App.jsx` and `dashboardData.js`. | The report depends on the dashboard contract (`DashboardData`, `statusStyle.js`, `StatusBadge`, `SimulatedBanner`, `wording.js`) and on the App view switch. Tasks for the report must run after dashboard task 7.2 and check-in task 7.7 (see Navigation and Sequencing risk). |
 | `DashboardData` = `{ status, alerts, readings: { 'domain/indicator': Reading[] }, baselineStats, rules: { 'domain/indicator': IndicatorRule } }`. | `readings` is a map and the builder takes a flat array. A small pure helper `flattenReadings` does the conversion. `rules` is passed to the builder unchanged and is keyed the same way. |
 | The dashboard hook reads Readings "for every indicator in `rules`". Radiation has no `indicators` in its `rules.json`, so its dose, flux and symptom Readings are not in `DashboardData.readings` as designed. | Without a change, Radiation would never show Last_Reading rows. The report task adds one step to `useDashboardData`: also load the radiation indicators (`cumulative_dose_mSv`, `premission_dose_mSv`, `proton_flux_pfu`, `symptom_*`) into `readings`. The check-in design already reads those same indicators for the engine, so this is the same list. Radiation rows then show the raw indicator name and no unit because no rule exists. |
 | `statusStyle.js` holds `STATUS_STYLE` for `normal`, `watch`, `act` and `nodata` with colour, icon shape, label and classes, plus `statusLabel(status)`. `StatusBadge({ status })` draws the icon and the label. | The report reuses `StatusBadge` and `statusLabel` and defines no colour. A source scan test (dashboard task) forbids hex colours in `ui/` outside `statusStyle.js`, so the print stylesheet uses the keywords `black` and `white` only. |
@@ -23,9 +23,9 @@ Stack: React, Vite, JavaScript only, Tailwind CSS, Vitest, fast-check. Component
 
 | Decision | Choice | Reason |
 | --- | --- | --- |
-| Where the pure code lives | `baseline/src/report/` (development plan folder). It imports only `engine/urgency.js` and `data/domains.js`. | The development plan lists `report/`. `structure.md` only lists `engine/`, so `report/` is an addition that mirrors the `engine/` purity rules. |
+| Where the pure code lives | `driftwatch/src/report/` (development plan folder). It imports only `engine/urgency.js` and `data/domains.js`. | The development plan lists `report/`. `structure.md` only lists `engine/`, so `report/` is an addition that mirrors the `engine/` purity rules. |
 | Builder signature | `buildGroundReport({ alerts, readings, rules, now, config })`. Requirement 1.1 lists four fields. `config` is a fifth, required field. | The caps and window length must be data (`reportConfig.json`) and `report/` must import no JSON. The caller passes the loaded config in, the same pattern as `loadCutoffs()` in core. A missing or invalid `config` throws `TypeError` because it is a programming error, not bad data. |
-| Caps as data | `baseline/src/data/reportConfig.json` holds `windowDays` (7), `maxActiveAlertsPerModule` (6), `maxLastReadings` (24) and the six Module_Labels, with `"source": "design value"`. `data/reportConfig.js` exports `loadReportConfig()` (static import, validate, freeze, cache), like `loadCutoffs()`. | Requirement 8 says the design may adjust the caps once the layout is fixed. A data file lets the print check change them without code edits, and the repo rule is that limits carry a `source`. |
+| Caps as data | `driftwatch/src/data/reportConfig.json` holds `windowDays` (7), `maxActiveAlertsPerModule` (6), `maxLastReadings` (24) and the six Module_Labels, with `"source": "design value"`. `data/reportConfig.js` exports `loadReportConfig()` (static import, validate, freeze, cache), like `loadCutoffs()`. | Requirement 8 says the design may adjust the caps once the layout is fixed. A data file lets the print check change them without code edits, and the repo rule is that limits carry a `source`. |
 | Cap values | Keep the requirement placeholders 6 and 24 for now. They are explicitly **placeholders until the print-preview check (see Manual checks)**. | See the page-fit analysis below: the worst case cannot fit one page at 9 pt, so any final value must come from looking at a real print preview of the 14-day scenario. |
 | How the screen gets data | `GroundReport` takes `data` (a `DashboardData`), `now` and optional `config`, `onPrint`, `refreshing` props. It never imports Dexie or `store/`. `App.jsx` owns the single `useDashboardData()` instance. | Requirement 10.6. Same pattern as `Dashboard` and `CheckInScreen`. |
 | Clock | `App.jsx` reads `Date.now()` once, when the user opens the report, and passes it as `now`. `GroundReport` and `buildGroundReport` never read the clock. | Requirement 6.4. The report does not change while it is open or being printed. |
@@ -72,7 +72,7 @@ Layering rules:
 New and changed files:
 
 ```text
-baseline/src/
+driftwatch/src/
   data/
     reportConfig.json         windowDays, caps, moduleLabels, source "design value"
     reportConfig.js           loadReportConfig(): static import, validate, freeze, cache
@@ -448,7 +448,7 @@ For any Alerts, Readings, rules, config and `now`, `JSON.parse(JSON.stringify(mo
 4. **Save as PDF file name.** The suggested file name starts with "Driftwatch ground report".
 5. **Keyboard and focus.** Tab to the navigation and to Print, see the focus outline, activate with Enter and Space.
 
-**Commands.** Run `npm run test:run` in `baseline/`. Dev dependencies are the ones the dashboard spec adds (`@testing-library/react`, `@testing-library/user-event`, `jsdom`). Do not run the dev server from tests.
+**Commands.** Run `npm run test:run` in `driftwatch/`. Dev dependencies are the ones the dashboard spec adds (`@testing-library/react`, `@testing-library/user-event`, `jsdom`). Do not run the dev server from tests.
 
 ### Requirements traceability
 

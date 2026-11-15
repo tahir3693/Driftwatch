@@ -2,7 +2,7 @@
 
 ## Overview
 
-The dashboard is the screen where an astronaut sees which body areas need attention and why. It is a read-only view over data the core already produces: Alerts from `runModules`, Readings from the Dexie store, and indicator text from each module's `rules.json`. It adds no engine logic. All code lives in `baseline/src/ui/`, with two small data files in `baseline/src/data/`.
+The dashboard is the screen where an astronaut sees which body areas need attention and why. It is a read-only view over data the core already produces: Alerts from `runModules`, Readings from the Dexie store, and indicator text from each module's `rules.json`. It adds no engine logic. All code lives in `driftwatch/src/ui/`, with two small data files in `driftwatch/src/data/`.
 
 Stack: React, Vite, JavaScript only, Tailwind CSS, Chart.js through react-chartjs-2, Vitest, fast-check. Tests for components add `@testing-library/react`, `@testing-library/user-event` and `jsdom` as dev dependencies. Nothing in the dashboard makes a network request. It uses a system font stack and bundles Chart.js.
 
@@ -10,7 +10,7 @@ Stack: React, Vite, JavaScript only, Tailwind CSS, Chart.js through react-chartj
 
 | Decision | Choice | Reason |
 | --- | --- | --- |
-| Region to domain mapping (assumption 1) | `baseline/src/data/regionMapping.json`: Head_And_Lungs = `radiation`, `environment`. Bones_And_Muscles = `gravity`. Whole_Body = `isolation`, `nutrition`, `system`. Mapping is by Alert `domain`, so `<domain>_overall` alerts follow their module. | Requirement 2.8 requires data, not constants. Mapping by domain keeps a new indicator in the right region with no UI change. |
+| Region to domain mapping (assumption 1) | `driftwatch/src/data/regionMapping.json`: Head_And_Lungs = `radiation`, `environment`. Bones_And_Muscles = `gravity`. Whole_Body = `isolation`, `nutrition`, `system`. Mapping is by Alert `domain`, so `<domain>_overall` alerts follow their module. | Requirement 2.8 requires data, not constants. Mapping by domain keeps a new indicator in the right region with no UI change. |
 | Missing modules | The dashboard only reads the Alerts it is given. A region with no mapped Alert shows "No data". The Isolation module is not in the repo yet, so Whole_Body shows nutrition (and system) alerts only until Isolation arrives. | Requirement 2.7. No special case for Isolation is needed. |
 | Region status | Pure function `computeRegionStatus(alerts)` in `ui/regionStatus.js`. It reuses `statusRank` from `engine/urgency.js` by import and does not modify the engine. | Requirement 12.2. One definition of rank. |
 | Baseline band (assumption 2) | Mean plus and minus one standard deviation. The mean is the Alert `baseline`. The sd comes from `baselineStats`, supplied by the app state layer (see below). | The Alert contract carries only the mean. The band must not be invented by the UI. |
@@ -53,7 +53,7 @@ Layering rules:
 File layout (new files only):
 
 ```text
-baseline/src/
+driftwatch/src/
   data/
     regionMapping.json        regions, display names, domains per region
     indicatorRules.js         loadIndicatorRules(): static import of each module rules.json -> { "domain/indicator": rule }
@@ -345,7 +345,7 @@ Property-based testing applies to the pure helpers, which have clear inputs and 
 
 **Not covered by automated tests** because they are visual and depend on a real browser: single column and two column layout (9.1, 9.2), 16 px body text (9.4), banner visibility at both widths (1.2), wording quality (8.1, 8.5) and bundled Chart.js (6.8). These are checked by hand in the browser at 360 px and 1280 px widths and with the network disabled.
 
-**Commands.** Add dev dependencies `@testing-library/react`, `@testing-library/user-event` and `jsdom`. Run `vitest --run` in `baseline/`.
+**Commands.** Add dev dependencies `@testing-library/react`, `@testing-library/user-event` and `jsdom`. Run `vitest --run` in `driftwatch/`.
 
 ### Requirements traceability
 

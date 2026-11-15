@@ -2,7 +2,7 @@
 
 ## Overview
 
-JavaScript only. All code lives in `baseline/src/`. Pure functions, including `runRulesModule` and the adapter (`defineModule`, `runModules`, no registry), go in `engine/`. Dexie code goes in `store/`. `data/` holds `cutoffs.json`, `cutoffs.js` (only `loadCutoffs`) and `domains.js`. `modules/<name>/` holds only `rules.json` and an `index.js` descriptor. Each engine function gets a unit test beside it (`*.test.js`). Property tests use fast-check and are optional (marked `*`); each is tagged `// Feature: core, Property N: ...` and runs at least 100 times. Store tests use `fake-indexeddb/auto`. Scenario and integration tests go in `baseline/tests/`. Run tests from `baseline/` with `npm run test:run`.
+JavaScript only. All code lives in `driftwatch/src/`. Pure functions, including `runRulesModule` and the adapter (`defineModule`, `runModules`, no registry), go in `engine/`. Dexie code goes in `store/`. `data/` holds `cutoffs.json`, `cutoffs.js` (only `loadCutoffs`) and `domains.js`. `modules/<name>/` holds only `rules.json` and an `index.js` descriptor. Each engine function gets a unit test beside it (`*.test.js`). Property tests use fast-check and are optional (marked `*`); each is tagged `// Feature: core, Property N: ...` and runs at least 100 times. Store tests use `fake-indexeddb/auto`. Scenario and integration tests go in `driftwatch/tests/`. Run tests from `driftwatch/` with `npm run test:run`.
 
 Band keys follow three families: `z_min`/`z_max`, `abs_z_min`/`abs_z_max`, `value_min`/`value_max`. There is no `basis` field. `_min` is inclusive and `_max` is exclusive. No engine file reads a clock, imports JSON, logs, or makes a network call. "Now" is always passed in.
 
@@ -10,8 +10,8 @@ Band keys follow three families: `z_min`/`z_max`, `abs_z_min`/`abs_z_max`, `valu
 
 - [x] 1. Test tooling setup
   - [x] 1.1 Install test dependencies and add the single-run script
-    - In `baseline/`, run `npm i -D fast-check fake-indexeddb`
-    - Add `"test:run": "vitest --run"` to `baseline/package.json` scripts
+    - In `driftwatch/`, run `npm i -D fast-check fake-indexeddb`
+    - Add `"test:run": "vitest --run"` to `driftwatch/package.json` scripts
     - Confirm `vitest --run` starts and reports no failing tests
     - _Requirements: 9.2, 9.3, 9.4, 9.5_
 
@@ -241,26 +241,26 @@ Band keys follow three families: `z_min`/`z_max`, `abs_z_min`/`abs_z_max`, `valu
 
 - [x] 14. Integration and structure tests
   - [x] 14.1 Write the pattern schema and rules fixture test
-    - Create `baseline/tests/fixtures/rules.sample.json` (one indicator per band family, one pattern) and `baseline/tests/patternSchema.test.js` asserting each pattern has `needs`, `min_in_watch`, `for_days`, `result`, `escalate`, `why`, `action`, `source`, in the fixture and in every bundled `rules.json`
+    - Create `driftwatch/tests/fixtures/rules.sample.json` (one indicator per band family, one pattern) and `driftwatch/tests/patternSchema.test.js` asserting each pattern has `needs`, `min_in_watch`, `for_days`, `result`, `escalate`, `why`, `action`, `source`, in the fixture and in every bundled `rules.json`
     - _Requirements: 6.1_
 
   - [x] 14.2 Write the shared 14-day scenario test
-    - Create `baseline/tests/scenario.test.js` that saves a 14-day scenario into the store (`fake-indexeddb/auto`), reads it back with `getReadings`, loads cutoffs with `loadCutoffs()`, and runs `runModules` for a rules module and a function module
+    - Create `driftwatch/tests/scenario.test.js` that saves a 14-day scenario into the store (`fake-indexeddb/auto`), reads it back with `getReadings`, loads cutoffs with `loadCutoffs()`, and runs `runModules` for a rules module and a function module
     - Assert both modules receive the same cutoffs object (one shared object for every module), every alert passes `validateAlert`, each module returns `<domain>_overall`, a slow drift raises `watch` before a fixed band is crossed, and `warnings` and `errors` are returned and not logged
     - _Requirements: 1.1, 1.2, 1.3, 3.2, 4.2, 4.5, 5.1, 7.1, 8.2, 8.3_
 
   - [x] 14.3 Write the engine purity test
-    - Create `baseline/tests/purity.test.js` that reads every non-test file in `src/engine/` and asserts: no import from `ui/`, `react`, `dexie`, or any `.json` file; no use of `console`, `fetch`, `XMLHttpRequest` or `Date.now`
+    - Create `driftwatch/tests/purity.test.js` that reads every non-test file in `src/engine/` and asserts: no import from `ui/`, `react`, `dexie`, or any `.json` file; no use of `console`, `fetch`, `XMLHttpRequest` or `Date.now`
     - _Requirements: 9.1, 7.2_
 
   - [x] 14.4 Write property test for offline equivalence
     - **Property 21: Same output online and offline**
-    - Create `baseline/tests/offline.test.js`: run the full pipeline with `fetch` and `XMLHttpRequest` stubbed to throw and again with them stubbed to succeed, assert deep-equal results and zero calls
+    - Create `driftwatch/tests/offline.test.js`: run the full pipeline with `fetch` and `XMLHttpRequest` stubbed to throw and again with them stubbed to succeed, assert deep-equal results and zero calls
     - **Validates: Requirements 7.1, 7.2, 7.3, 7.4**
 
   - [x] 14.5 Write the engine test coverage check
-    - Create `baseline/tests/engineCoverage.test.js` that lists `src/engine/*.js` (excluding tests) and asserts each has a sibling `*.test.js` that imports it
-    - Run `npm run test:run` in `baseline/` and confirm zero failures
+    - Create `driftwatch/tests/engineCoverage.test.js` that lists `src/engine/*.js` (excluding tests) and asserts each has a sibling `*.test.js` that imports it
+    - Run `npm run test:run` in `driftwatch/` and confirm zero failures
     - _Requirements: 9.2, 9.3, 9.4, 9.5_
 
 - [x] 15. Final checkpoint - Ensure all tests pass

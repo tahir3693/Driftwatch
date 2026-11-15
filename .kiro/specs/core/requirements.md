@@ -4,7 +4,7 @@
 
 This spec covers the shared core of Driftwatch, an offline-first early-warning health copilot for astronauts. The core is the code every hazard module depends on: a Dexie reading store, a personal-baseline engine, band evaluation, drift detection, urgency scoring, pattern detection, and a module adapter that wraps existing plain-function modules (the teammates' Radiation and Isolation code) without rewriting them.
 
-Code lives in `baseline/src/`: `engine/` (pure functions), `store/` (Dexie), `modules/<name>/` (rules.json and wrappers). The stack is JavaScript only, Dexie and Vitest. Driftwatch is decision support, not a medical device, and all demo data is simulated.
+Code lives in `driftwatch/src/`: `engine/` (pure functions), `store/` (Dexie), `modules/<name>/` (rules.json and wrappers). The stack is JavaScript only, Dexie and Vitest. Driftwatch is decision support, not a medical device, and all demo data is simulated.
 
 ## Glossary
 
@@ -155,8 +155,8 @@ Code lives in `baseline/src/`: `engine/` (pure functions), `store/` (Dexie), `mo
 
 #### Acceptance Criteria
 
-1. THE Core SHALL implement `computeBaseline`, `evaluate`, `urgency` and `patterns` as pure functions in `baseline/src/engine/` with no import from `ui/`, React or Dexie.
-2. THE Core SHALL provide at least one Vitest unit test for every function exported from `baseline/src/engine/`.
+1. THE Core SHALL implement `computeBaseline`, `evaluate`, `urgency` and `patterns` as pure functions in `driftwatch/src/engine/` with no import from `ui/`, React or Dexie.
+2. THE Core SHALL provide at least one Vitest unit test for every function exported from `driftwatch/src/engine/`.
 3. THE Core SHALL provide property-based or multi-case Vitest tests for the Baseline_Engine, the Urgency_Scorer cut-off mapping, the Drift_Detector and the Module_Adapter validation.
-4. WHEN `vitest --run` is executed in `baseline/`, THE Core test suite SHALL complete with zero failing tests.
+4. WHEN `vitest --run` is executed in `driftwatch/`, THE Core test suite SHALL complete with zero failing tests.
 5. WHERE a Vitest test needs IndexedDB, THE Core test suite SHALL use an in-memory IndexedDB substitute so that the tests run without a browser.

@@ -4,14 +4,14 @@
 
 The Driftwatch core is the shared engine every hazard module depends on. It stores readings in IndexedDB (Dexie), computes a personal baseline, evaluates each indicator against bands from `rules.json`, detects slow drift, scores urgency with shared cut-offs, detects combined patterns, and wraps plain-function modules (Radiation, Isolation) through a pure module adapter that validates the Alert contract.
 
-All code lives in `baseline/src/`. The stack is JavaScript only, Dexie, Vitest, with fast-check for property tests and fake-indexeddb for store tests. No code in the core makes a network request.
+All code lives in `driftwatch/src/`. The stack is JavaScript only, Dexie, Vitest, with fast-check for property tests and fake-indexeddb for store tests. No code in the core makes a network request.
 
 Design decisions:
 
 | Decision | Choice | Reason |
 | --- | --- | --- |
 | Where status comes from | The band gives the status. The urgency scorer then maps the status and a severity (0 to 1) into the urgency range of that status. | Keeps Requirement 3.1 (band selects status) and Requirement 5.4 to 5.6 (urgency maps to status) consistent by construction. |
-| Cutoffs_File path | `baseline/src/data/cutoffs.json`, read by `baseline/src/data/cutoffs.js` | The engine stays pure: it receives cutoffs as a parameter and never imports JSON or Dexie. |
+| Cutoffs_File path | `driftwatch/src/data/cutoffs.json`, read by `driftwatch/src/data/cutoffs.js` | The engine stays pure: it receives cutoffs as a parameter and never imports JSON or Dexie. |
 | Drift method | CUSUM on the z-score in the bad direction, with reference value `k` and threshold `h` | Simple, explainable, tunable from rules.json. |
 | Timestamps | Integer or float epoch milliseconds | Sorting and window filtering need no parsing. |
 | "Now" | Always passed in (`options.now`, `ctx.now`), never read from a clock inside engine functions | Pure, deterministic, testable. |
@@ -60,7 +60,7 @@ Layering rules:
 File layout:
 
 ```text
-baseline/
+driftwatch/
   tests/                      scenario and integration tests (14-day scenario, offline run)
   src/
     data/
@@ -315,7 +315,7 @@ There is no module-level registry and no state. The caller keeps the list of des
 | 9.1 | Layering rules; engine purity smoke test |
 | 9.2 | `engine/*.test.js` beside each engine file |
 | 9.3 | Property tests for Properties 4, 5, 13 to 17, 22 to 25 |
-| 9.4 | `vitest --run` in `baseline/` |
+| 9.4 | `vitest --run` in `driftwatch/` |
 | 9.5 | `fake-indexeddb/auto` in store tests |
 
 ## Data Models
@@ -582,8 +582,8 @@ Unit tests (example-based) sit next to each engine file as `*.test.js` and cover
 - Adapter examples: define one plain-function module and one rules module (Requirements 8.1, 8.2), and check that `runModules` passes the same cutoffs object to both.
 - Engine purity smoke test: scan `engine/*.js` imports and assert none reference `ui/`, `react`, `dexie`, or a `.json` file, and that no file uses `console`, `fetch` or `Date.now` (Requirement 9.1).
 
-Scenario and integration tests go in `baseline/tests/`: the shared 14-day scenario run through `runModules`, and the network-off run (Property 21).
+Scenario and integration tests go in `driftwatch/tests/`: the shared 14-day scenario run through `runModules`, and the network-off run (Property 21).
 
-Not automated: Requirements 9.2 to 9.5 are process requirements checked by running `vitest --run` in `baseline/` with zero failures. Manual check: load the built app with the network off.
+Not automated: Requirements 9.2 to 9.5 are process requirements checked by running `vitest --run` in `driftwatch/` with zero failures. Manual check: load the built app with the network off.
 
 `package.json` needs a `"test:run": "vitest --run"` script and the two dev dependencies above.

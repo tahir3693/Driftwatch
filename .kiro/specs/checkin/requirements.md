@@ -4,7 +4,7 @@
 
 This spec covers the Driftwatch daily check-in: a screen where an astronaut answers a short form for each module (Environment, Radiation, Isolation, Gravity, Nutrition). Each submitted form is turned into Readings, saved through the Reading_Store, and the engine is re-run so the Dashboard alerts update. A streak counter rewards the habit of completing the check-in. The streak never depends on any reading value or alert status.
 
-The check-in builds on the core spec (`.kiro/specs/core/`) and the dashboard spec (`.kiro/specs/dashboard/`). It adds no scoring logic and changes no `rules.json` band, no Radiation engine rule and no Cutoffs_File value. Code lives in `baseline/src/`: pure functions in `engine/`, the Dexie additions in `store/`, the screen in `ui/`, and the form ranges in `data/`. The stack is React, Vite, JavaScript only, Tailwind CSS, Dexie and Vitest. There is no backend and no network at runtime. All text is English. Driftwatch is decision support, not a medical device, and all demo data is simulated and labelled "Simulated".
+The check-in builds on the core spec (`.kiro/specs/core/`) and the dashboard spec (`.kiro/specs/dashboard/`). It adds no scoring logic and changes no `rules.json` band, no Radiation engine rule and no Cutoffs_File value. Code lives in `driftwatch/src/`: pure functions in `engine/`, the Dexie additions in `store/`, the screen in `ui/`, and the form ranges in `data/`. The stack is React, Vite, JavaScript only, Tailwind CSS, Dexie and Vitest. There is no backend and no network at runtime. All text is English. Driftwatch is decision support, not a medical device, and all demo data is simulated and labelled "Simulated".
 
 Assumptions (to be confirmed in the design):
 
@@ -15,14 +15,14 @@ Assumptions (to be confirmed in the design):
 5. **Day.** A day is the local calendar day of the submit time. The UI layer reads the clock once per submit and passes `now` into the pure functions. Engine functions read no clock.
 6. **Streak rule.** A day counts toward the streak when at least one module form was submitted that day. The minimum is a design value of 1, held in a data file, so that a lost sensor or a short shift does not break the streak. The streak stays alive through the current day: the count ends at today when today has a check-in, and ends at yesterday when today has none yet.
 7. **Second submit.** A second submit of the same module on the same day replaces the first submit of that module on that day, so the personal baseline never counts one day twice.
-8. **Ranges are design values.** Each form field has a plausible-entry range held in `baseline/src/data/checkinRanges.json` with the source `"design value"`. These ranges only reject impossible entries. They are not clinical limits and differ from the bands in each `rules.json`.
+8. **Ranges are design values.** Each form field has a plausible-entry range held in `driftwatch/src/data/checkinRanges.json` with the source `"design value"`. These ranges only reject impossible entries. They are not clinical limits and differ from the bands in each `rules.json`.
 9. **Not covered by the check-in.** The check-in does not write `cabin_co2_7day_avg_mmHg`, `low_intake_bone_note`, `resting_heart_rate_bpm`, `standing_bp_drop`, `orthostatic_symptoms`, `vitamin_d_ng_ml` or `social_contact`.
 10. **Navigation.** The app has a simple view switch between the Dashboard and the Check_In_Screen, with no router. Re-running the engine uses the same data hook that feeds the Dashboard, extended with a refresh call.
 11. **Phone width and laptop width.** "Phone width" means 360 CSS pixels and "laptop width" means 1280 CSS pixels, as in the dashboard spec.
 
 ## Glossary
 
-- **Check_In_Screen**: The React screen in `baseline/src/ui/` that shows the Module_Forms and the Streak_Display.
+- **Check_In_Screen**: The React screen in `driftwatch/src/ui/` that shows the Module_Forms and the Streak_Display.
 - **Module_Form**: One short form on the Check_In_Screen for one module: Environment_Form, Radiation_Form, Isolation_Form, Gravity_Form or Nutrition_Form.
 - **Check_In_Validator**: The pure function in `engine/` that checks raw form values against the Form_Ranges and returns a list of field errors.
 - **Check_In_Mapper**: The pure function in `engine/` that turns valid form values and a submit time into a list of Readings.
@@ -31,7 +31,7 @@ Assumptions (to be confirmed in the design):
 - **Reading**: A record with `timestamp`, `domain`, `indicator` and `value`, as defined by the core spec.
 - **Reading_Store**: The Dexie store of Readings defined by the core spec.
 - **Alert**: An object with exactly the fields `domain`, `indicator`, `value`, `baseline`, `status`, `urgency`, `why`, `action`, `escalate`, `source`, as defined by the core spec.
-- **Form_Ranges**: The data file `baseline/src/data/checkinRanges.json` that holds the minimum and maximum accepted value of each numeric form field, each with the source `"design value"`.
+- **Form_Ranges**: The data file `driftwatch/src/data/checkinRanges.json` that holds the minimum and maximum accepted value of each numeric form field, each with the source `"design value"`.
 - **Field_Error**: A message for one form field that states the problem and the accepted range.
 - **Symptom_Check_Code**: The numeric value of the `symptom_check` indicator in the Environment `rules.json`: 0 for none, 1 for headache or vision change on 2 or more days, 2 for a symptom that persists or nausea with fatigue.
 - **Radiation_Symptom_Key**: One of `nausea`, `vomiting`, `fatigue`, `skin`, `fever`, `bruising`, the keys of the Radiation engine symptom list.
@@ -225,11 +225,11 @@ Assumptions (to be confirmed in the design):
 
 #### Acceptance Criteria
 
-1. THE Check_In_Validator, the Check_In_Mapper, the Streak_Counter, the Median_Reaction function and the Symptom_Check_Code derivation SHALL be pure functions in `baseline/src/engine/` with no import from `ui/`, React or Dexie.
+1. THE Check_In_Validator, the Check_In_Mapper, the Streak_Counter, the Median_Reaction function and the Symptom_Check_Code derivation SHALL be pure functions in `driftwatch/src/engine/` with no import from `ui/`, React or Dexie.
 2. THE check-in test suite SHALL include at least one Vitest unit test for every function exported from the new `engine/` files.
 3. THE check-in test suite SHALL include property-based tests for the Streak_Counter properties of Requirement 10, the Median_Reaction property of Requirement 5, and the property that every Reading returned by the Check_In_Mapper passes `validateReading`.
 4. THE check-in test suite SHALL include example tests for each Symptom_Check_Code rule of Requirement 2, each Field_Error of Requirement 7, and each range in the Form_Ranges at its minimum, its maximum and just outside both.
 5. THE check-in test suite SHALL include store tests, using an in-memory IndexedDB substitute, that show a second submit of one module on one day leaves one set of Readings and one Check_In_Record.
 6. THE check-in test suite SHALL include an integration test in which a submit of a CO2 value above the `act` Band edge changes the `environment_overall` Alert, and in which the Streak is the same before and after that Alert status change.
 7. THE check-in test suite SHALL include component tests (jsdom) that check the label of each input, the `aria-describedby` link of an error, focus on the first invalid field, and keyboard submit of one Module_Form.
-8. WHEN `vitest --run` is executed in `baseline/`, THE check-in test suite SHALL complete with zero failing tests.
+8. WHEN `vitest --run` is executed in `driftwatch/`, THE check-in test suite SHALL complete with zero failing tests.

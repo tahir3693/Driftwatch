@@ -6,7 +6,7 @@ This spec covers the Driftwatch Ground_Report: a one-page summary of the last 7 
 
 The stack is React with Vite, JavaScript only, Tailwind CSS and Vitest. The report needs no backend and no network at runtime (milestone M4: works with the network off). All text is English, there are no NASA logos or branding, and there are no photos of people. All demo data is simulated and the report says so. Driftwatch is decision support, not a medical device.
 
-Code location: the pure function and its helpers go in `baseline/src/report/` (development plan), with a test file beside each. The screen component goes in `baseline/src/ui/`. Print rules are a stylesheet with an `@media print` block.
+Code location: the pure function and its helpers go in `driftwatch/src/report/` (development plan), with a test file beside each. The screen component goes in `driftwatch/src/ui/`. Print rules are a stylesheet with an `@media print` block.
 
 Assumptions (to be confirmed in the design):
 
