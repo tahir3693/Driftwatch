@@ -1,18 +1,18 @@
-﻿import StatusBadge from './StatusBadge.jsx'
+import StatusBadge from './StatusBadge.jsx'
 import { styleFor } from './statusStyle.js'
 import { alertCardModel } from './alertModel.js'
 
 /**
  * The block at the top of the dashboard: overall status in words, counts, an escalation banner and the
- * most urgent alert. Props: { summary, rules, loading, onShowCheckIn, compactTop }.
+ * most urgent alert. Props: { summary, rules, loading, onShowCheckIn, onPlayScenario, compactTop }.
  * `compactTop` hides the why, action and source of the most urgent alert because the same alert is
  * already open in the region details below (so the same text is not read twice).
  */
-export default function StatusSummary({ summary, rules = {}, loading = false, onShowCheckIn, compactTop = false }) {
+export default function StatusSummary({ summary, rules = {}, loading = false, onShowCheckIn, onPlayScenario, compactTop = false }) {
   const checkIn =
     typeof onShowCheckIn === 'function' ? (
       <button type="button" onClick={onShowCheckIn} className="dw-btn dw-btn-primary min-h-11 min-w-11">
-        Check-in
+        Add a check-in
       </button>
     ) : null
   if (loading) {
@@ -27,12 +27,26 @@ export default function StatusSummary({ summary, rules = {}, loading = false, on
   }
   if (summary.empty) {
     return (
-      <section aria-label="Status summary" className="dw-card p-4">
-        <p className="text-xl font-bold">No alerts yet</p>
-        <p className="mt-1 text-ink-2">
-          There is nothing to show yet. Do a check-in to add today's readings, or play the simulated scenario below to see how Driftwatch works.
-        </p>
-        {checkIn ? <div className="mt-3">{checkIn}</div> : null}
+      <section aria-label="Status summary" className="dw-card border-l-8 border-line-strong p-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <StatusBadge status={null} large />
+          <p className="text-xl font-bold" data-testid="status-headline">
+            Overall: No data yet
+          </p>
+        </div>
+        <p className="mt-2">Nothing logged yet. Play the simulated scenario or add a check-in.</p>
+        <div className="mt-3 flex flex-wrap gap-3">
+          {typeof onPlayScenario === 'function' ? (
+            <button type="button" onClick={onPlayScenario} className="dw-btn dw-btn-primary min-h-11 min-w-11">
+              Play the 14-day scenario
+            </button>
+          ) : null}
+          {typeof onShowCheckIn === 'function' ? (
+            <button type="button" onClick={onShowCheckIn} className="dw-btn min-h-11 min-w-11">
+              Add a check-in
+            </button>
+          ) : null}
+        </div>
       </section>
     )
   }

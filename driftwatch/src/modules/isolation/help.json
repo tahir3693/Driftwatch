@@ -1,0 +1,19 @@
+{
+  "note": "Help text for alerts that have none in rules.json (the overall alert and the pattern). Read by the detail view.",
+  "indicators": {
+    "isolation_overall": {
+      "label": "Overall: isolation",
+      "howToMeasure": "Calculated by the app from this module's indicators; you do not measure it.",
+      "whyItMatters": "It combines the module's signals into one status so no single reading raises an alert alone. Act means follow the suggested action and contact the flight surgeon.",
+      "action": "Follow the suggested action on the alert card. For Act, contact the flight surgeon.",
+      "source": "design value"
+    },
+    "combined_strain": {
+      "label": "Possible combined strain",
+      "howToMeasure": "Calculated by the app from sleep, mood and stress, reaction time and social contact; you do not measure it.",
+      "whyItMatters": "Several small changes at the same time can be a possible sign of strain that one reading would not show.",
+      "action": "Follow the suggested action on the alert card and talk to the flight surgeon or crew support.",
+      "source": "design value"
+    }
+  }
+}

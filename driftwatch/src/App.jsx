@@ -7,14 +7,15 @@ import BmdTrackerScreen from './ui/BmdTrackerScreen.jsx'
 import SourcesPanel from './ui/SourcesPanel.jsx'
 import ScenarioControls from './ui/ScenarioControls.jsx'
 import AppNav from './ui/AppNav.jsx'
-import { useDashboardData } from './store/dashboardData.js'
+import { useDashboardData, emptyDashboardData } from './store/dashboardData.js'
+import { resetStoredData } from './store/resetData.js'
 import { useCheckIn } from './store/useCheckIn.js'
 import { useScenarioPlayer } from './store/scenarioPlayer.js'
 import { useSpaceWeather } from './store/spaceWeather.js'
 
 export default function App() {
   const { data: stored, refresh } = useDashboardData()
-  const { streak, submit } = useCheckIn(refresh)
+  const { streak, submit, reload: reloadStreak } = useCheckIn(refresh)
   const scenario = useScenarioPlayer()
   const spaceWeather = useSpaceWeather(refresh)
   const [view, setView] = useState('dashboard') // 'dashboard' | 'checkin' | 'report' | 'sources' | 'bmd'
@@ -23,7 +24,17 @@ export default function App() {
   const openCount = useRef(0)
 
   // While the scenario plays, every screen shows the scenario day; otherwise the stored data.
-  const data = scenario.data ?? stored
+  // With no user-entered data (no check-in, nothing in the tracker), the screens start clean:
+  // leftover simulated readings in the store are not shown as the user's state.
+  const hasSavedData = stored.status === 'ready' && stored.hasUserData === true
+  const clean = stored.status === 'ready' && stored.hasUserData !== true
+  const data = scenario.data ?? (clean ? { ...emptyDashboardData(), rules: stored.rules } : stored)
+  async function resetData() {
+    await resetStoredData()
+    scenario.reset()
+    await refresh()
+    await reloadStreak()
+  }
 
   // Opening the report reads the clock once, so the alerts and the 7-day window share one `now`.
   // During the scenario the report uses the scenario day's time and needs no refresh.
@@ -57,6 +68,7 @@ export default function App() {
       onPause={scenario.pause}
       onNext={scenario.next}
       onReset={scenario.reset}
+      hasSavedData={hasSavedData}
     />
   )
 
@@ -83,6 +95,8 @@ export default function App() {
           data={data}
           onShowCheckIn={() => changeView('checkin')}
           onShowBmd={() => changeView('bmd')}
+          onPlayScenario={scenario.play}
+          onResetData={resetData}
           spaceWeather={spaceWeather}
           scenarioControls={controls}
         />

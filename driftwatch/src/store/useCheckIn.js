@@ -17,7 +17,7 @@ async function readStreak(now) {
 }
 
 /**
- * useCheckIn(refresh) returns { streak: { count, todayModules, increased }, submit(module, raw) }.
+ * useCheckIn(refresh) returns { streak: { count, todayModules, increased }, submit(module, raw), reload() }.
  * submit reads the clock once and resolves with the service result ({ status, errors?, ... }).
  */
 export function useCheckIn(refresh) {
@@ -52,5 +52,14 @@ export function useCheckIn(refresh) {
     return result
   }, [])
 
-  return { streak, submit }
+  // Re-read the streak, for example after the saved data was reset.
+  const reload = useCallback(async () => {
+    try {
+      const s = await readStreak(Date.now())
+      if (alive.current) setStreak({ ...s, increased: false })
+    } catch (e) {
+      console.error('Driftwatch: could not read the check-in streak', e)
+    }
+  }, [])
+  return { streak, submit, reload }
 }

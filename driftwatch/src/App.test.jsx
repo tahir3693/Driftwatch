@@ -64,7 +64,7 @@ describe('App', () => {
   it('shows the Play scenario button on the first screen', async () => {
     render(<App />)
     expect(await screen.findByRole('button', { name: 'Play scenario' })).toBeTruthy()
-    expect(screen.getByTestId('scenario-day').textContent).toBe('Not started: showing stored data')
+    expect(screen.getByTestId('scenario-day').textContent).toBe('Not started: nothing logged yet')
   })
 
   it('drives the body map and detail view with the scenario: day 11 Radiation Act, urgency 63, escalate', async () => {
@@ -87,7 +87,7 @@ describe('App', () => {
     expect(screen.getByRole('button', { name: 'Head and lungs: Watch' })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'Whole body: Act' })).toBeTruthy()
     await userEvent.click(screen.getByRole('button', { name: 'Reset' }))
-    expect(screen.getByTestId('scenario-day').textContent).toBe('Not started: showing stored data')
+    expect(screen.getByTestId('scenario-day').textContent).toBe('Not started: nothing logged yet')
     expect(screen.queryByRole('button', { name: 'Whole body: Act' })).toBeNull()
   })
 
@@ -103,7 +103,7 @@ describe('App', () => {
 
   it('switches to the check-in screen and back, with one disclaimer on each screen', async () => {
     render(<App />)
-    const toCheckIn = await screenButton('Check-in')
+    const toCheckIn = await screenButton('Add a check-in')
     expect(toCheckIn.className).toMatch(/min-h-11/)
     expect(toCheckIn.className).toMatch(/min-w-11/)
     await userEvent.click(toCheckIn)
@@ -140,7 +140,7 @@ describe('App', () => {
   })
   it('saves an Environment check-in, shows the confirmation and the streak, and keeps one Reading set', async () => {
     render(<App />)
-    await userEvent.click(await screenButton('Check-in'))
+    await userEvent.click(await screenButton('Add a check-in'))
     await userEvent.type(screen.getByLabelText('Cabin CO2, 1-hour average (mmHg)'), '3.4')
     const headache = screen.getByRole('group', { name: 'Headache or vision change today' })
     await userEvent.click(within(headache).getByLabelText('No'))
@@ -160,7 +160,7 @@ describe('App', () => {
 
   it('shows field errors, saves nothing, and focuses the first invalid field', async () => {
     render(<App />)
-    await userEvent.click(await screenButton('Check-in'))
+    await userEvent.click(await screenButton('Add a check-in'))
     await userEvent.type(screen.getByLabelText('Exercise sessions in the last 7 days'), '2.5')
     await userEvent.click(screen.getByRole('button', { name: 'Save Gravity' }))
     const input = screen.getByLabelText('Exercise sessions in the last 7 days')
@@ -172,7 +172,7 @@ describe('App', () => {
 
   it('shows the new alert on the dashboard after a check-in, without a reload', async () => {
     render(<App />)
-    await userEvent.click(await screenButton('Check-in'))
+    await userEvent.click(await screenButton('Add a check-in'))
     await userEvent.type(screen.getByLabelText('Share of the planned menu eaten today (%)'), '40')
     await userEvent.click(screen.getByRole('button', { name: 'Save Nutrition' }))
     expect(await screen.findByText('Saved. Alerts updated.')).toBeTruthy()

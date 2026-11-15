@@ -4,6 +4,8 @@ import { getReadings } from './readings.js'
 import { loadBmdState, localToday } from './bmdState.js'
 import { seedScenario } from './seedScenario.js'
 import { getSpaceWeather } from './spaceWeather.js'
+import { db } from './db.js'
+import { trackerHasEntries } from '../modules/bmd-strength/bmdAdapter.js'
 import { loadCutoffs } from '../data/cutoffs.js'
 import { getModuleDescriptors } from '../data/moduleList.js'
 import { loadIndicatorRules } from '../data/indicatorRules.js'
@@ -32,7 +34,21 @@ export const emptyDashboardData = (status = 'ready') => ({
   baselineStats: {},
   rules: {},
   hasReadings: false,
+  hasUserData: false,
 })
+/**
+ * True when the user has entered data on this device: a saved check-in, or a measurement or ticked
+ * training day in the BMD and strength tracker. Readings written by the simulated scenario are not
+ * user data. A read failure counts as no user data.
+ */
+export async function hasUserEnteredData(bmdState = loadBmdState()) {
+  if (trackerHasEntries(bmdState)) return true
+  try {
+    return (await db.checkins.count()) > 0
+  } catch {
+    return false
+  }
+}
 
 /**
  * Reads every stored indicator, runs the modules and returns a DashboardData.
@@ -64,7 +80,9 @@ export async function buildDashboardData(now) {
   }
 
   const cutoffs = loadCutoffs()
-  const ctx = { cutoffs, now, bmd: { state: loadBmdState(), today: localToday(new Date(now)) }, spaceWeather: getSpaceWeather() }
+  const bmdState = loadBmdState()
+  const hasUserData = await hasUserEnteredData(bmdState)
+  const ctx = { cutoffs, now, bmd: { state: bmdState, today: localToday(new Date(now)) }, spaceWeather: getSpaceWeather() }
   const { alerts, errors, warnings } = runModules(getModuleDescriptors(), readingsByDomain, ctx)
   for (const err of errors) console.error('Driftwatch module error', err)
   for (const w of warnings) console.warn('Driftwatch module warning', w)
@@ -80,6 +98,7 @@ export async function buildDashboardData(now) {
     baselineStats: baselineStatsFor(readings, rules),
     rules,
     hasReadings: Object.values(readings).some((l) => l.length > 0),
+    hasUserData,
   }
 }
 

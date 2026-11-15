@@ -1,0 +1,34 @@
+{
+  "note": "Help text for gravity alerts that have none in rules.json: the overall alert, the pattern and the BMD and strength tracker workouts and overall. Read by the detail view.",
+  "indicators": {
+    "gravity_overall": {
+      "label": "Overall: gravity",
+      "howToMeasure": "Calculated by the app from this module's indicators; you do not measure it.",
+      "whyItMatters": "It combines the module's signals into one status so no single reading raises an alert alone. Act means follow the suggested action and contact the flight surgeon.",
+      "action": "Follow the suggested action on the alert card. For Act, contact the flight surgeon.",
+      "source": "design value"
+    },
+    "bone_muscle_risk": {
+      "label": "Possible bone and muscle risk",
+      "howToMeasure": "Calculated by the app from exercise sessions and the low food intake note; you do not measure it.",
+      "whyItMatters": "Low exercise together with low food intake is a possible risk to bone and muscle. Looking at both together avoids an alert from one reading alone.",
+      "action": "Follow the suggested action on the alert card and review exercise and the menu with the flight surgeon.",
+      "source": "design value"
+    },
+    "workouts_this_week": {
+      "label": "Workouts this week",
+      "unit": "days",
+      "howToMeasure": "Tick each day's strength and endurance training in the weekly table of the BMD and strength tracker. Only days up to today count.",
+      "whyItMatters": "NASA found 6 to 7 exercise sessions a week effective to maintain bone in spaceflight. Fewer days is a possible risk to bone and muscle.",
+      "action": "Plan the next sessions this week and ask the flight surgeon if you keep missing them.",
+      "source": "NASA OCHMO-TB-030 (6 to 7 exercise sessions a week); scoring is a design value"
+    },
+    "bmd_strength_overall": {
+      "label": "Overall: BMD and strength",
+      "howToMeasure": "Calculated by the app from this module's indicators; you do not measure it.",
+      "whyItMatters": "It combines the module's signals into one status so no single reading raises an alert alone. Act means follow the suggested action and contact the flight surgeon.",
+      "action": "Follow the suggested action on the alert card. For Act, contact the flight surgeon.",
+      "source": "design value"
+    }
+  }
+}

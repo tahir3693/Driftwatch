@@ -16,10 +16,14 @@ describe('ScenarioControls', () => {
     render(<ScenarioControls {...props()} />)
     expect(screen.getByRole('button', { name: 'Play scenario' })).toBeTruthy()
     expect(screen.getByText('Simulated')).toBeTruthy()
-    expect(screen.getByRole('status').textContent).toBe('Not started: showing stored data')
+    expect(screen.getByRole('status').textContent).toBe('Not started: nothing logged yet')
     expect(screen.getByRole('button', { name: 'Reset' }).disabled).toBe(true)
   })
 
+  it('says Showing your saved data before the start when the user has saved data', () => {
+    render(<ScenarioControls {...props({ hasSavedData: true })} />)
+    expect(screen.getByRole('status').textContent).toBe('Showing your saved data')
+  })
   it('shows the day as text in a polite live region', () => {
     render(<ScenarioControls {...props({ day: 11 })} />)
     const status = screen.getByRole('status')

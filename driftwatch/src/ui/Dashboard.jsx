@@ -10,17 +10,20 @@ import BmdTrackerLink from './BmdTrackerLink.jsx'
 import SpaceWeatherLine from './SpaceWeatherLine.jsx'
 import StatusSummary from './StatusSummary.jsx'
 import Glossary from './Glossary.jsx'
+import ResetData from './ResetData.jsx'
 import { groupByRegion, computeRegionStatus, sortByUrgency } from './regionStatus.js'
 import { summarizeAlerts, groupByStatus } from './dashboardSummary.js'
 const keyOf = (alert) => `${alert.domain}/${alert.indicator}`
 const isOverall = (alert) => alert.indicator === `${alert.domain}_overall`
 /**
- * The dashboard. Props: { data: DashboardData, mapping, onLoadScenario, onShowCheckIn, onShowBmd, spaceWeather, scenarioControls }.
+ * The dashboard. Props: { data: DashboardData, mapping, onLoadScenario, onShowCheckIn, onShowBmd, onPlayScenario,
+ * onResetData, spaceWeather, scenarioControls }.
  * `scenarioControls` is an element (the scenario player) shown under the status summary.
- * Top to bottom: banner, status summary with the body map, scenario player, region details, word list.
+ * Top to bottom: banner, status summary with the body map, scenario player, region details, word list,
+ * and the reset control.
  * Presentational: it never reads storage or calls the engine.
  */
-export default function Dashboard({ data, mapping = defaultMapping, onLoadScenario, onShowCheckIn, onShowBmd, spaceWeather = null, scenarioControls = null }) {
+export default function Dashboard({ data, mapping = defaultMapping, onLoadScenario, onShowCheckIn, onShowBmd, onPlayScenario, onResetData, spaceWeather = null, scenarioControls = null }) {
   const [selectedRegion, setSelectedRegion] = useState(null)
   const [helpTarget, setHelpTarget] = useState(null)
   const [loadError, setLoadError] = useState(false)
@@ -81,7 +84,7 @@ export default function Dashboard({ data, mapping = defaultMapping, onLoadScenar
       <SimulatedBanner />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,28rem)] lg:items-start">
         <div className="min-w-0 space-y-4">
-          <StatusSummary summary={summary} rules={data.rules ?? {}} loading={isLoading} onShowCheckIn={onShowCheckIn} compactTop={topIsBelow} />
+          <StatusSummary summary={summary} rules={data.rules ?? {}} loading={isLoading} onShowCheckIn={onShowCheckIn} onPlayScenario={onPlayScenario} compactTop={topIsBelow} />
           {isLoading ? <p className="text-ink-2">Loading data</p> : null}
           {showSeed ? (
             <div className="dw-card p-4">
@@ -146,6 +149,7 @@ export default function Dashboard({ data, mapping = defaultMapping, onLoadScenar
         )}
       </section>
       <Glossary />
+      {typeof onResetData === 'function' ? <ResetData onReset={onResetData} /> : null}
     </div>
   )
 }

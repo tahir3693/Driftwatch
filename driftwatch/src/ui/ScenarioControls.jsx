@@ -1,9 +1,10 @@
-﻿/**
+/**
  * Controls for the simulated 14-day scenario. Props:
- * { day, days, playing, finished, onPlay, onPause, onNext, onReset }.
+ * { day, days, playing, finished, onPlay, onPause, onNext, onReset, hasSavedData }.
+ * Before the scenario starts the label says whether the screens show the user's saved data.
  * Grouped as one panel: a clear day label, a progress bar for day 1 to 14, then the buttons.
  */
-export default function ScenarioControls({ day, days = 14, playing, finished, onPlay, onPause, onNext, onReset }) {
+export default function ScenarioControls({ day, days = 14, playing, finished, onPlay, onPause, onNext, onReset, hasSavedData = false }) {
   const button = 'dw-btn min-h-11 min-w-11'
   const percent = Math.round((Math.min(Math.max(day, 0), days) / days) * 100)
   return (
@@ -29,7 +30,7 @@ export default function ScenarioControls({ day, days = 14, playing, finished, on
         <span style={{ width: `${percent}%` }} />
       </div>
       <p role="status" aria-live="polite" className="mt-2 text-lg font-semibold" data-testid="scenario-day">
-        {day === 0 ? 'Not started: showing stored data' : `Day ${day} of ${days} (Simulated)`}
+        {day === 0 ? (hasSavedData ? 'Showing your saved data' : 'Not started: nothing logged yet') : `Day ${day} of ${days} (Simulated)`}
       </p>
       <div role="group" aria-label="Scenario controls" className="mt-3 flex flex-wrap items-center gap-3">
         <button type="button" onClick={onPlay} disabled={playing} className={`${button} dw-btn-primary`}>

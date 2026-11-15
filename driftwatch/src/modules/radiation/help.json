@@ -1,0 +1,36 @@
+{
+  "note": "Help text for the radiation alerts, read by the detail view. Kept apart from radiation-engine.js and rules.json, which are not changed. No scoring here.",
+  "indicators": {
+    "cumulative_dose": {
+      "label": "Cumulative career dose",
+      "unit": "mSv",
+      "howToMeasure": "The app does not measure this. On real missions, personal dosimeters and the ground team track the running total. Here the dose is simulated.",
+      "whyItMatters": "Radiation dose adds up over a career. NASA requires the career total to stay under 600 mSv.",
+      "action": "Follow the suggested action on the alert card and tell the flight surgeon if the total keeps rising.",
+      "source": "NASA-STD-3001 Vol 1 Rev C (V1 4030) via NASA OCHMO-TB-020"
+    },
+    "symptom_check_in": {
+      "label": "Radiation symptom check-in",
+      "unit": "symptoms",
+      "howToMeasure": "In the daily check-in, tick any of: nausea, vomiting, unusual fatigue, skin redness or irritation, fever or chills, easy bruising or bleeding.",
+      "whyItMatters": "These can be possible signs of radiation exposure but have many other causes, so they are combined with dose and space weather.",
+      "action": "Log every possible symptom and tell the flight surgeon if they continue.",
+      "source": "design value"
+    },
+    "solar_proton_flux": {
+      "label": "Solar proton flux (10 MeV and above)",
+      "unit": "pfu",
+      "howToMeasure": "Read the flux from space-weather data. NOAA's GOES satellites report protons at 10 MeV and above in pfu. Here the value is simulated.",
+      "whyItMatters": "A solar particle event is a burst of fast protons from the Sun that can raise exposure within hours. Follow your mission's solar particle event procedure.",
+      "action": "Follow your mission's solar particle event procedure and the suggested action on the alert card.",
+      "source": "NOAA SWPC S-scale; points per level are a design value"
+    },
+    "radiation_overall": {
+      "label": "Overall: radiation",
+      "howToMeasure": "Calculated by the app from this module's indicators; you do not measure it.",
+      "whyItMatters": "It combines the module's signals into one status so no single reading raises an alert alone. Act means follow the suggested action and contact the flight surgeon.",
+      "action": "Follow the suggested action on the alert card. For Act, contact the flight surgeon.",
+      "source": "design value"
+    }
+  }
+}

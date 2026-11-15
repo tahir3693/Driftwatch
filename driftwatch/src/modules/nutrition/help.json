@@ -1,0 +1,12 @@
+{
+  "note": "Help text for the overall alert, which has none in rules.json. Read by the detail view.",
+  "indicators": {
+    "nutrition_overall": {
+      "label": "Overall: nutrition",
+      "howToMeasure": "Calculated by the app from this module's indicators; you do not measure it.",
+      "whyItMatters": "It combines the module's signals into one status so no single reading raises an alert alone. Act means follow the suggested action and contact the flight surgeon.",
+      "action": "Follow the suggested action on the alert card. For Act, contact the flight surgeon.",
+      "source": "design value"
+    }
+  }
+}

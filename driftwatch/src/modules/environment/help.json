@@ -1,0 +1,26 @@
+{
+  "note": "Help text for alerts that have none in rules.json (the overall alert and the patterns). Read by the detail view.",
+  "indicators": {
+    "environment_overall": {
+      "label": "Overall: environment",
+      "howToMeasure": "Calculated by the app from this module's indicators; you do not measure it.",
+      "whyItMatters": "It combines the module's signals into one status so no single reading raises an alert alone. Act means follow the suggested action and contact the flight surgeon.",
+      "action": "Follow the suggested action on the alert card. For Act, contact the flight surgeon.",
+      "source": "design value"
+    },
+    "infection_like": {
+      "label": "Possible infection-like pattern",
+      "howToMeasure": "Calculated by the app from body temperature and sleep; you do not measure it.",
+      "whyItMatters": "A raised temperature together with poor sleep can be a possible early sign of infection. Looking at both together avoids an alert from one reading alone.",
+      "action": "Follow the suggested action on the alert card and tell the flight surgeon if it continues.",
+      "source": "design value"
+    },
+    "infection_like_with_symptoms": {
+      "label": "Possible infection-like pattern with symptoms",
+      "howToMeasure": "Calculated by the app from body temperature, sleep and the symptom check-in; you do not measure it.",
+      "whyItMatters": "A raised temperature, poor sleep and logged symptoms together can be a possible sign of infection. Looking at them together avoids an alert from one reading alone.",
+      "action": "Follow the suggested action on the alert card and contact the flight surgeon.",
+      "source": "design value"
+    }
+  }
+}

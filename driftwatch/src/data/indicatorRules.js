@@ -5,8 +5,25 @@ import nutrition from '../modules/nutrition/rules.json'
 import isolation from '../modules/isolation/rules.json'
 import radiation from '../modules/radiation/rules.json'
 import bmd from '../modules/bmd-strength/rules.json'
+import radiationHelp from '../modules/radiation/help.json'
+import environmentHelp from '../modules/environment/help.json'
+import isolationHelp from '../modules/isolation/help.json'
+import gravityHelp from '../modules/gravity/help.json'
+import nutritionHelp from '../modules/nutrition/help.json'
 
 const SOURCES = { environment, gravity, nutrition, isolation, radiation }
+// Fallback help (help.json in each module folder) for alerts whose help is not in rules.json:
+// the radiation alerts, every <domain>_overall, the patterns and the tracker's workouts alert.
+export const HELP_FALLBACK = { radiation: radiationHelp, environment: environmentHelp, isolation: isolationHelp, gravity: gravityHelp, nutrition: nutritionHelp }
+const HELP_FIELDS = ['label', 'unit', 'howToMeasure', 'whyItMatters', 'action', 'source']
+const hasText = (v) => typeof v === 'string' && v.trim().length > 0
+/** Fill only the help fields that rules.json leaves missing or empty. rules.json always wins. */
+function withFallback(rule, help) {
+  if (!help) return rule
+  const out = { ...(rule ?? {}) }
+  for (const f of HELP_FIELDS) if (!hasText(out[f]) && hasText(help[f])) out[f] = help[f]
+  return out
+}
 
 export function loadIndicatorRules() {
   const out = {}
@@ -25,6 +42,12 @@ export function loadIndicatorRules() {
         action: rule.action,
         source: rule.source,
       }
+    }
+  }
+  for (const [domain, file] of Object.entries(HELP_FALLBACK)) {
+    for (const [indicator, help] of Object.entries(file.indicators ?? {})) {
+      const key = `${domain}/${indicator}`
+      out[key] = withFallback(out[key], help)
     }
   }
   return out

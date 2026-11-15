@@ -137,8 +137,12 @@ describe('engineAlerts: act', () => {
   })
 
   it('maps 3 or fewer trained days to Act and escalates', () => {
+    // 0 days this week counts once a workout has been logged before (here, the week before).
+    const earlier = { '2025-01-06': { strength: true } }
     for (const days of [0, 1, 3]) {
-      const a = by(run(stateWith(days))).workouts_this_week
+      const state = stateWith(days)
+      state.weeklyWorkouts = { ...earlier, ...state.weeklyWorkouts }
+      const a = by(run(state)).workouts_this_week
       expect(a).toMatchObject({ status: 'act', urgency: 100, escalate: true, value: days })
       expect(a.why).toMatch(/possible/)
       expect(a.action).toMatch(/flight surgeon/)
@@ -190,6 +194,24 @@ describe('engineAlerts: empty tracker state raises no alerts', () => {
     for (const a of alerts.slice(0, 5)) expect(a.value).toBeNull()
     expect(by(alerts).hip_bmd.why).toMatch(/no hip bmd baseline/i)
     expect(by(alerts).workouts_this_week.why).toMatch(/no training/i)
+  })
+})
+
+describe('engineAlerts: an unused training log is no data', () => {
+  it('keeps workouts_this_week Normal when no workout has ever been logged, even with measurements saved', () => {
+    for (const weeklyWorkouts of [undefined, {}, { '2025-01-13': { strength: false, endurance: false } }]) {
+      const alerts = run({ measurements: [baseline, reading('hip', 0.99)], weeklyWorkouts })
+      const a = by(alerts).workouts_this_week
+      expect(a).toMatchObject({ status: 'normal', urgency: 0, escalate: false, value: null, baseline: null })
+      expect(a.why).toMatch(/no training has been logged/i)
+      expect(by(alerts).bmd_strength_overall.status).toBe('normal')
+      for (const x of alerts) expect(validateAlert(x)).toEqual({ ok: true })
+    }
+  })
+
+  it('scores the week once any day has been ticked', () => {
+    const a = by(run({ measurements: [], weeklyWorkouts: { '2025-01-06': { endurance: true } } })).workouts_this_week
+    expect(a).toMatchObject({ status: 'act', value: 0 })
   })
 })
 

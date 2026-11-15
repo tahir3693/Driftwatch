@@ -31,6 +31,21 @@ export function trackerInUse(state) {
   return measurements.length > 0 || Object.keys(weekly).length > 0
 }
 
+/** True once any training day has been ticked in the tracker (any week). */
+export function anyWorkoutLogged(state) {
+  const weekly = state?.weeklyWorkouts && typeof state.weeklyWorkouts === 'object' ? state.weeklyWorkouts : {}
+  return Object.values(weekly).some((day) => day?.strength === true || day?.endurance === true)
+}
+
+/**
+ * True when the user has entered anything in the tracker: a measurement or a ticked training day.
+ * Unticked days alone are not data.
+ */
+export function trackerHasEntries(state) {
+  const measurements = Array.isArray(state?.measurements) ? state.measurements : []
+  return measurements.length > 0 || anyWorkoutLogged(state)
+}
+
 /** Monday to Sunday dates (YYYY-MM-DD) of the week that contains `today`. Uses UTC so it is pure. */
 export function weekDates(today) {
   const [y, m, d] = today.split('-').map(Number)

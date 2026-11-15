@@ -9,7 +9,7 @@
 // bands, and writes the wording ("possible", ask the flight surgeon).
 import { evaluate, RULES } from './teammate-engine/BMD_and_strength_engine.js'
 import { statusFromUrgency } from '../../engine/urgency.js'
-import { sortedMeasurements, trackerInUse, weekDates } from './bmdAdapter.js'
+import { sortedMeasurements, anyWorkoutLogged, weekDates } from './bmdAdapter.js'
 import rules from './rules.json'
 
 const DOMAIN = rules.domain // 'gravity'
@@ -176,7 +176,8 @@ function overall(alerts, cutoffs) {
  * options: { today: 'YYYY-MM-DD', cutoffs: { watch_from, act_from } }.
  * Returns hip_bmd, lumbar_spine_bmd, bench_press_strength, deadlift_strength, workouts_this_week
  * and bmd_strength_overall. An indicator with no baseline or no reading is Normal with urgency 0
- * and no ratio (value null), and an unused tracker raises nothing.
+ * and no ratio (value null), and an unused tracker raises nothing. workouts_this_week stays Normal (no data)
+ * until a training day has been ticked at least once.
  */
 export function engineAlerts(state, { today, cutoffs }) {
   const measurements = sortedMeasurements(state)
@@ -201,7 +202,8 @@ export function engineAlerts(state, { today, cutoffs }) {
     results.push(parameterAlert(p, rest[0], latest[p.key] / base[p.key], cutoffs))
   }
   let workouts
-  if (!trackerInUse(state)) {
+  // No workout ever logged means the training log is unused: no data, not zero training days.
+  if (!anyWorkoutLogged(state)) {
     workouts = noDataWorkouts(cutoffs)
   } else {
     // The Workouts score does not depend on the baseline, so any evaluate call gives it. With no
