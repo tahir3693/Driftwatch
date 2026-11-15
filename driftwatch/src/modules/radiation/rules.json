@@ -1,37 +1,8 @@
 {
   "module": "radiation",
   "kind": "function",
-  "note": "The scoring lives in radiation-engine.js. This file lists its limits, marks the source of each number, and holds the help text for each indicator. The engine is wrapped as a plain function, so the bands are in the engine and not here.",
-  "indicators": {
-    "cumulative_dose": {
-      "label": "Cumulative career dose",
-      "unit": "mSv",
-      "howToMeasure": "The app does not measure this. On real missions, personal dosimeters and the ground team track the running total. Here the dose is simulated. Compare it with the 600 mSv career requirement.",
-      "whyItMatters": "Radiation dose adds up over a career. NASA's career requirement is set to limit long-term health risk, so a higher share leaves less room for future missions.",
-      "source": "NASA-STD-3001 Vol 1 Rev B (V1 4030) via NASA OCHMO-TB-020 for the 600 mSv career requirement"
-    },
-    "symptom_check_in": {
-      "label": "Radiation symptom check-in",
-      "unit": "symptoms",
-      "howToMeasure": "In the daily check-in, tick any of: nausea, vomiting, unusual fatigue, skin redness or irritation, fever or chills, easy bruising or bleeding.",
-      "whyItMatters": "Very high short-term doses can cause symptoms like nausea, vomiting and fatigue. These have many other causes, so a symptom is only a possible sign and is combined with dose and space weather.",
-      "source": "design value"
-    },
-    "solar_proton_flux": {
-      "label": "Solar proton flux (10 MeV and above)",
-      "unit": "pfu",
-      "howToMeasure": "Read the flux from space-weather data. NOAA's GOES satellites report protons at 10 MeV and above in pfu. Here the value is simulated.",
-      "whyItMatters": "A solar particle event is a burst of fast protons from the Sun that can raise exposure within hours. Higher flux means higher risk. Follow your mission's solar particle event procedure.",
-      "source": "NOAA SWPC S-scale for the S1 to S5 thresholds; the points given to each level are a design value"
-    },
-    "radiation_overall": {
-      "label": "Radiation overall",
-      "unit": "score",
-      "howToMeasure": "Calculated by the app from the dose, symptom and solar flux inputs. Dose adds up to 40 points, symptoms up to 35 and solar flux up to 25, capped at 100.",
-      "whyItMatters": "It combines signals so that no single reading raises an alert alone. A score of 60 or more is Act and escalates to the flight surgeon.",
-      "source": "design value"
-    }
-  },
+  "note": "The scoring lives in radiation-engine.js. This file lists its limits and marks the source of each number. It has no indicators because the engine is wrapped as a plain function.",
+  "indicators": {},
   "official": {
     "career_effective_dose_mSv": {
       "value": 600,
