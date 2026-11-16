@@ -24,9 +24,9 @@ These hazards can lead to bone loss, cardiovascular changes, immune changes, poo
 
 | Hazard | What Driftwatch watches | Notes |
 |---|---|---|
-| **Radiation** | Career dose as a share of the NASA career effective dose requirement; possible radiation symptoms from the check-in; solar proton flux | Proton flux steps follow the **NOAA** S-scale. The radiation engine was written by a teammate. |
-| **Isolation and confinement** | Sleep, mood and stress (0 to 10), a 60-second reaction check, and social contact | Two or more signs at Watch for 2 days raise a combined strain alert at Act, with escalation. The Isolation module was written by a teammate. |
-| **Altered gravity** | Exercise sessions per week, resting heart rate, blood pressure drop on standing, orthostatic symptoms, and a bone note when food intake is low | The **BMD and strength tracker** (written by a teammate) adds hip and spine BMD and lift strength as a share of baseline, plus missed training days. It opens from the Bones and muscles view. |
+| **Radiation** | Career dose as a share of the NASA career effective dose requirement; possible radiation symptoms from the check-in; solar proton flux | Proton flux steps follow the **NOAA** S-scale. The radiation engine was written by Humairah Zafirah. |
+| **Isolation and confinement** | Sleep, mood and stress (0 to 10), a 60-second reaction check, and social contact | Two or more signs at Watch for 2 days raise a combined strain alert at Act, with escalation. The Isolation module was written by Sunaina Babar. |
+| **Altered gravity** | Exercise sessions per week, resting heart rate, blood pressure drop on standing, orthostatic symptoms, and a bone note when food intake is low | The **BMD and strength tracker** (written by Luis) adds hip and spine BMD and lift strength as a share of baseline, plus missed training days. It opens from the Bones and muscles view. |
 | **Hostile closed environment** | Cabin CO2 (1-hour and 7-day averages), a CO2 symptom check, body temperature and sleep | A temperature rise together with short sleep for 3 days raises a possible infection-like pattern. |
 | **Nutrition** | Food intake against plan and vitamin D | Driftwatch never tells anyone to take supplements. |
 | **Distance from Earth** | Works with no network | All data stays on the device. A daily check-in with a streak keeps the routine going. A one-page ground report, printable to PDF, is ready for the next contact with the ground. |
@@ -62,8 +62,8 @@ Screens:
 
 | Source | Publisher | Used for |
 |---|---|---|
-| [NASA-STD-3001 Volume 1, Crew Health](https://www.nasa.gov/reference/nasa-std-3001v1/) (cited as Rev B; Rev C is now current) | NASA | Career effective dose requirement (V1 4030). The reference solar particle event design requirement (V1 4031) is shown as context only. |
-| [OCHMO-TB-020 Radiation Protection](https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-020-radiation-protection.pdf) | NASA | NASA-STD-3001 career dose requirement, as summarised in the technical brief |
+| [NASA-STD-3001 Volume 1, Crew Health](https://www.nasa.gov/reference/nasa-std-3001v1/) (Rev C) | NASA | Career effective dose requirement (V1 4030). The reference solar particle event design requirement (V1 4031) is shown as context only. |
+| [OCHMO-TB-020 Design for Ionizing Radiation Protection](https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-020-radiation-protection.pdf) | NASA | NASA-STD-3001 career dose requirement, as summarised in the technical brief |
 | [OCHMO-TB-004 Carbon Dioxide](https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-004-carbon-dioxide.pdf) | NASA | 3 mmHg 1-hour average and 2.5 mmHg 7-day average for cabin CO2 |
 | [OCHMO-TB-030 Bone Loss](https://www.nasa.gov/wp-content/uploads/2023/12/ochmo-tb-030-bone-loss.pdf) | NASA | 6 to 7 exercise sessions a week, the 95% of baseline hip and spine BMD limit, and the vitamin D range |
 | [Behavioral Challenges of a Mars Mission (NTRS)](https://ntrs.nasa.gov/citations/20240010442) | NASA | Context for sleep, stress ratings, the reaction check and scheduled contact. The Isolation limits are design values. |
@@ -107,11 +107,11 @@ The development server (`npm run dev`) does not register the service worker, so 
 ## Team
 
 - Muhammad Tahir (core engine, dashboard, check-in, ground report and integration)
-- Humairah Zafirah Binte Abdul Latiff (Radiation module)
+- Humairah Zafirah (Radiation module)
 - Sunaina Babar (Isolation module)
 - Luis (BMD and strength tracker)
 
-The radiation engine was written by a teammate. See [AI_DISCLOSURE.md](AI_DISCLOSURE.md) for what was made with AI assistance.
+See [AI_DISCLOSURE.md](AI_DISCLOSURE.md) for what was made with AI assistance.
 
 ## Licence
 
