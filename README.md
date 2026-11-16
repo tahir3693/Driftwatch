@@ -107,6 +107,7 @@ The development server (`npm run dev`) does not register the service worker, so 
 ## Team
 
 - Muhammad Tahir (core engine, dashboard, check-in, ground report and integration)
+- Humairah Zafirah (Radiation module)
 - Sunaina Babar (Isolation module)
 - Luis (BMD and strength tracker)
 
